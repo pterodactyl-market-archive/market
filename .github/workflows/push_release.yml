@@ -52,7 +52,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}  
          
       - name: Upload artifact ARM-Linux
-        id: upload-release-asset 
+        id: upload-release-asset-arm
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -63,7 +63,7 @@ jobs:
           asset_content_type: application/binary
          
       - name: Upload artifact AMD-Linux
-        id: upload-release-asset 
+        id: upload-release-asset-amd
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
