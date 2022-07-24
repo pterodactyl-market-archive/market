@@ -1,0 +1,51 @@
+name: build_binary
+
+on:
+  push:
+
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: latest
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.19.0-beta.1'
+
+      - name: Build Admin dashboard UI
+        run: npm --prefix=./ui ci && npm --prefix=./ui run build
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v3
+        with:
+          distribution: goreleaser
+          version: latest
+          args: --snapshot
+
+      - name: Upload artifact AMD-Linux
+        uses: actions/upload-artifact@v2
+        with:
+          name: pocketbase_amd-${{ github.run_id }}-run_${{ github.run_attempt }}
+          path: dist/pocketbase_linux_amd64_v1/pocketbase
+
+      - name: Upload artifact ARM-Linux
+        uses: actions/upload-artifact@v2
+        with:
+          name: pocketbase_arm-${{ github.run_id }}-run_${{ github.run_attempt }}
+          path: dist/pocketbase_linux_arm64/pocketbase
+
+      - name: Upload artifact 'path:dist'
+        uses: actions/upload-artifact@v2
+        with:
+          name: full_build-${{ github.run_id }}-run_${{ github.run_attempt }}.zip
+          path: dist

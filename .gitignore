@@ -4,9 +4,12 @@
 .DS_Store
 
 # goreleaser builds folder
-/.builds/
+dist
 
-# examples app directories
+# built dist
+ui/dist
+
+#  app directories
 pb_data
 pb_public
 
