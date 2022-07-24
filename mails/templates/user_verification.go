@@ -12,7 +12,7 @@ package templates
 const UserVerificationBody = `
 {{define "content"}}
 	<p>Hello,</p>
-	<p>Thank you for joining us at {{.AppName}}.</p>
+	<p>Thank you for joining {{.AppName}}.</p>
 	<p>Click on the button below to verify your email address.</p>
 	<p>
 		<a class="btn" href="{{.ActionUrl}}">Verify</a>
