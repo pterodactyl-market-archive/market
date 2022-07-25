@@ -1,0 +1,3 @@
+[submodule "market"]
+	path = market
+	url = https://github.com/pterodactylmarket/frontend
