@@ -50,7 +50,7 @@ func main() {
 		e.Router.GET("/data/*", apis.StaticDirectoryHandler(dataFs, false))
 
 		e.Router.FileFS(
-			"/",
+			"/*",
 			"index.html",
 			echo.MustSubFS(e.Router.Filesystem, "market_frontend/dist"),
 			middleware.Gzip(),
