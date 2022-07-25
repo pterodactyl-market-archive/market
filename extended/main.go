@@ -30,7 +30,7 @@ func main() {
 		e.Router.FileFS(
 			"/",
 			"index.html",
-			e.File("/", echo.MustSubFS(e.Router.Filesystem, "market_frontend/dist/index.html")),
+			echo.MustSubFS(e.Router.Filesystem, "market_frontend/dist/index.html"),
 			middleware.Gzip(),
 		)
 
