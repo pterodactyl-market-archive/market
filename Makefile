@@ -1,3 +1,16 @@
+.ONESHELL:
+.PHONY: statik
+
+statik:
+	cd ../market_frontend && yarn build-ci
+	statik -src=../market_frontend/dist
+	
+build:
+	../goreleaser --snapshot
+
+clean:
+	rm -rf ./statik
+
 lint:
 	golangci-lint run -c ./golangci.yml ./...
 
