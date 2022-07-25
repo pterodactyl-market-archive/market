@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/labstack/echo/v5"
+	"github.com/labstack/echo/v5/middleware"
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/apis"
 	"github.com/pocketbase/pocketbase/core"
@@ -26,7 +27,13 @@ func main() {
 		distFs := echo.MustSubFS(e.Router.Filesystem, "market_frontend/dist")
 		dataFs := echo.MustSubFS(e.Router.Filesystem, path)
 		
-		e.Router.GET("/*", apis.StaticDirectoryHandler(distFs, false))
+		e.Router.GET("/*", middleware.StaticWithConfig(middleware.StaticConfig{
+			Root:   distFs,
+			Index:  "index.html",
+			Browse: false,
+			HTML5:  true,
+		}), middleware.Gzip())
+		
 		e.Router.GET("/data/*", apis.StaticDirectoryHandler(dataFs, false))
 
 		
