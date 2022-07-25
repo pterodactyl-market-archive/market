@@ -98,11 +98,6 @@ func InitApi(app core.App) (*echo.Echo, error) {
 		return nil, err
 	}
 
-	// catch all any route
-	api.Any("/*", func(c echo.Context) error {
-		return echo.ErrNotFound
-	}, ActivityLogger(app))
-
 	return e, nil
 }
 
