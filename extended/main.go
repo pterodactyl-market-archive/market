@@ -9,6 +9,7 @@ import (
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/apis"
 	"github.com/pocketbase/pocketbase/core"
+	"github.com/pocketbase/pocketbase/market"
 )
 
 func main() {
@@ -25,7 +26,8 @@ func main() {
 		
 		subFs := echo.MustSubFS(e.Router.Filesystem, path)
 		e.Router.GET("/data/*", apis.StaticDirectoryHandler(subFs, false))
-
+		e.Router.GET("/*",apis.StaticDirectoryHandler(market.DistDirFS, false), middleware.Gzip(),)
+		
 		return nil
 	})
 
