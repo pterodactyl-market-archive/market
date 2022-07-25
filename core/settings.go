@@ -44,13 +44,13 @@ type Settings struct {
 func NewSettings() *Settings {
 	return &Settings{
 		Meta: MetaConfig{
-			AppName:                   "Acme",
-			AppUrl:                    "http://localhost:8090",
+			AppName:                   "Pterodactyl Market",
+			AppUrl:                    "http://localhost:80",
 			SenderName:                "Support",
-			SenderAddress:             "support@example.com",
-			UserVerificationUrl:       EmailPlaceholderAppUrl + "/_/#/users/confirm-verification/" + EmailPlaceholderToken,
-			UserResetPasswordUrl:      EmailPlaceholderAppUrl + "/_/#/users/confirm-password-reset/" + EmailPlaceholderToken,
-			UserConfirmEmailChangeUrl: EmailPlaceholderAppUrl + "/_/#/users/confirm-email-change/" + EmailPlaceholderToken,
+			SenderAddress:             "support@pterodactylmarket.com",
+			UserVerificationUrl:       EmailPlaceholderAppUrl + "/admin/#/users/confirm-verification/" + EmailPlaceholderToken,
+			UserResetPasswordUrl:      EmailPlaceholderAppUrl + "/admin/#/users/confirm-password-reset/" + EmailPlaceholderToken,
+			UserConfirmEmailChangeUrl: EmailPlaceholderAppUrl + "/admin/#/users/confirm-email-change/" + EmailPlaceholderToken,
 		},
 		Logs: LogsConfig{
 			MaxDays: 7,
