@@ -9,8 +9,6 @@ import (
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/apis"
 	"github.com/pocketbase/pocketbase/core"
-	"github.com/labstack/echo/v5/middleware"
-	"github.com/pocketbase/pocketbase/market"
 )
 
 func main() {
@@ -27,9 +25,9 @@ func main() {
 		
 		subFs := echo.MustSubFS(e.Router.Filesystem, path)
 		e.Router.GET("/data/*", apis.StaticDirectoryHandler(subFs, false))
-                
+		
                 subFs := echo.MustSubFS(e.Router.Filesystem, "market_frontend/dist")
-                e.Router.GET("/*", apis.StaticDirectoryHandler(subFs, false))
+		e.Router.GET("/*", apis.StaticDirectoryHandler(subFs, false))
 		
 		return nil
 	})
