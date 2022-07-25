@@ -13,7 +13,7 @@ func main() {
 	app := pocketbase.New()
 
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
-		subFs := echo.MustSubFS(e.Router.Filesystem, "frontend/dist")
+		subFs := echo.MustSubFS(e.Router.Filesystem, "public_data")
 		e.Router.GET("/*", apis.StaticDirectoryHandler(subFs, false))
 
 		return nil
