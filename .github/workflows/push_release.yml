@@ -6,7 +6,7 @@ on:
 jobs:
   release-on-push:
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, '[norelease]')"
+    if: "contains(github.event.head_commit.message, '[release]')"
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -38,6 +38,9 @@ jobs:
 
       - name: Build Admin dashboard UI
         run: npm --prefix=./ui ci && npm --prefix=./ui run build
+        
+      - name: Build market frontend
+        run: npm --prefix=./market ci && npm --prefix=./market run build-ci
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v3
