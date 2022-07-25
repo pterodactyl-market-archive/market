@@ -9,6 +9,7 @@ import (
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/apis"
 	"github.com/pocketbase/pocketbase/core"
+	"github.com/labstack/echo/v5/middleware"
 	"github.com/pocketbase/pocketbase/market"
 )
 
