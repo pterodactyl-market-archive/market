@@ -26,7 +26,9 @@ func main() {
 		
 		subFs := echo.MustSubFS(e.Router.Filesystem, path)
 		e.Router.GET("/data/*", apis.StaticDirectoryHandler(subFs, false))
-		e.Router.GET("/*",apis.StaticDirectoryHandler(market.DistDirFS, false), middleware.Gzip(),)
+                
+                subFs := echo.MustSubFS(e.Router.Filesystem, "market_frontend/dist")
+                e.Router.GET("/*", apis.StaticDirectoryHandler(subFs, false))
 		
 		return nil
 	})
