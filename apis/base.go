@@ -97,6 +97,12 @@ func InitApi(app core.App) (*echo.Echo, error) {
 	if err := app.OnBeforeServe().Trigger(serveEvent); err != nil {
 		return nil, err
 	}
+	
+	// catch all any route
+	api.Any("/*", func(c echo.Context) error {
+		return echo.ErrNotFound
+	}, ActivityLogger(app))
+
 
 	return e, nil
 }
@@ -151,17 +157,16 @@ func bindStaticMarketUI(app core.App, e *echo.Echo) error {
 	// serves /market/dist/index.html file
 	// (explicit route is used to avoid conflicts with `RemoveTrailingSlash` middleware)
 	e.FileFS(
-		"/",
+		"/_",
 		"index.html",
 		market.DistIndexHTML,
 		middleware.Gzip(),
-		installerRedirect(app),
 	)
 
 	// serves static files from the /market/dist directory
 	// (similar to echo.StaticFS but with gzip middleware enabled)
 	e.GET(
-		"/*",
+		"/_/*",
 		StaticDirectoryHandler(market.DistDirFS, false),
 		middleware.Gzip(),
 	)
