@@ -15,6 +15,7 @@ import (
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/tools/rest"
 	"github.com/pocketbase/pocketbase/ui"
+	"github.com/pocketbase/pocketbase/market"
 	"github.com/spf13/cast"
 )
 
