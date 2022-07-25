@@ -42,7 +42,7 @@ jobs:
         run: npm --prefix=./ui ci && npm --prefix=./ui run build
         
       - name: Build market frontend
-        run: npm --prefix=./market ci && npm --prefix=./market run build-ci
+        run: npm --prefix=./market i --package-lock-only --force && npm --prefix=./market ci --force && npm --prefix=./market run build-ci
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v3
