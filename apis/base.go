@@ -131,7 +131,7 @@ func bindStaticAdminUI(app core.App, e *echo.Echo) error {
 	// serves /ui/dist/index.html file
 	// (explicit route is used to avoid conflicts with `RemoveTrailingSlash` middleware)
 	e.FileFS(
-		"/_",
+		"/admin",
 		"index.html",
 		ui.DistIndexHTML,
 		middleware.Gzip(),
@@ -141,7 +141,7 @@ func bindStaticAdminUI(app core.App, e *echo.Echo) error {
 	// serves static files from the /ui/dist directory
 	// (similar to echo.StaticFS but with gzip middleware enabled)
 	e.GET(
-		"/_/*",
+		"/admin/*",
 		StaticDirectoryHandler(ui.DistDirFS, false),
 		middleware.Gzip(),
 	)
@@ -188,12 +188,12 @@ func installerRedirect(app core.App) echo.MiddlewareFunc {
 
 			if totalAdmins == 0 && !hasInstallerParam {
 				// redirect to the installer page
-				return c.Redirect(http.StatusTemporaryRedirect, "/_/?installer#")
+				return c.Redirect(http.StatusTemporaryRedirect, "/admin/?installer#")
 			}
 
 			if totalAdmins != 0 && hasInstallerParam {
 				// redirect to the home page
-				return c.Redirect(http.StatusTemporaryRedirect, "/_/#/")
+				return c.Redirect(http.StatusTemporaryRedirect, "/admin/#/")
 			}
 
 			return next(c)
