@@ -72,7 +72,8 @@ func InitApi(app core.App) (*echo.Echo, error) {
 		}
 	}
 
-	// admin ui routes
+	// ui embed routes
+	bindStaticMarketUI(app, e)
 	bindStaticAdminUI(app, e)
 
 	// default routes
@@ -148,6 +149,30 @@ func bindStaticAdminUI(app core.App, e *echo.Echo) error {
 
 	return nil
 }
+
+// bindStaticMarketUI registers the endpoints that serves the static market UI.
+func bindStaticMarketUI(app core.App, e *echo.Echo) error {
+	// serves /market/dist/index.html file
+	// (explicit route is used to avoid conflicts with `RemoveTrailingSlash` middleware)
+	e.FileFS(
+		"/",
+		"index.html",
+		market.DistIndexHTML,
+		middleware.Gzip(),
+		installerRedirect(app),
+	)
+
+	// serves static files from the /market/dist directory
+	// (similar to echo.StaticFS but with gzip middleware enabled)
+	e.GET(
+		"/*",
+		StaticDirectoryHandler(market.DistDirFS, false),
+		middleware.Gzip(),
+	)
+
+	return nil
+}
+
 
 const totalAdminsCacheKey = "totalAdmins"
 
