@@ -23,11 +23,12 @@ func main() {
 			}
 		}
 		
-		subFs := echo.MustSubFS(e.Router.Filesystem, path)
-		e.Router.GET("/data/*", apis.StaticDirectoryHandler(subFs, false))
+		distFs := echo.MustSubFS(e.Router.Filesystem, "market_frontend/dist")
+		dataFs := echo.MustSubFS(e.Router.Filesystem, path)
 		
-        subFs := echo.MustSubFS(e.Router.Filesystem, "market_frontend/dist")
-		e.Router.GET("/*", apis.StaticDirectoryHandler(subFs, false))
+		e.Router.GET("/*", apis.StaticDirectoryHandler(distFs, false))
+		e.Router.GET("/data/*", apis.StaticDirectoryHandler(dataFs, false))
+
 		
 		return nil
 	})
