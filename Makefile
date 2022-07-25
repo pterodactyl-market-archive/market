@@ -2,6 +2,7 @@
 .PHONY: statik
 
 statik:
+	rm -rf ./statik
 	cd ../market_frontend && yarn build-ci
 	statik -src=../market_frontend/dist
 	
