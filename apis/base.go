@@ -157,7 +157,7 @@ func bindStaticMarketUI(app core.App, e *echo.Echo) error {
 	// serves /market/dist/index.html file
 	// (explicit route is used to avoid conflicts with `RemoveTrailingSlash` middleware)
 	e.FileFS(
-		"/_",
+		"/",
 		"index.html",
 		market.DistIndexHTML,
 		middleware.Gzip(),
@@ -166,7 +166,7 @@ func bindStaticMarketUI(app core.App, e *echo.Echo) error {
 	// serves static files from the /market/dist directory
 	// (similar to echo.StaticFS but with gzip middleware enabled)
 	e.GET(
-		"/_/*",
+		"/*",
 		StaticDirectoryHandler(market.DistDirFS, false),
 		middleware.Gzip(),
 	)
