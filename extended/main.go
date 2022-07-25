@@ -12,6 +12,23 @@ import (
 	"github.com/pocketbase/pocketbase/core"
 )
 
+func StaticDirectoryHandler(fileSystem fs.FS, disablePathUnescaping bool) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		p := c.PathParam("*")
+		if !disablePathUnescaping {
+			tmpPath, err := url.PathUnescape(p)
+			if err != nil {
+				return fmt.Errorf("failed to unescape path variable: %w", err)
+			}
+			p = tmpPath
+		}
+
+		name := filepath.ToSlash(filepath.Clean(strings.TrimPrefix(p, "/")))
+
+		return c.FileFS(name, fileSystem)
+	}
+}
+
 func main() {
 	app := pocketbase.New()
 
@@ -30,7 +47,7 @@ func main() {
 		e.Router.FileFS(
 			"/",
 			"index.html",
-			echo.MustSubFS(e.Router.Filesystem, "market_frontend/dist/index.html"),
+			echo.MustSubFS(e.Router.Filesystem, "market_frontend/dist"),
 			middleware.Gzip(),
 		)
 
@@ -38,7 +55,6 @@ func main() {
 			"/*",
 			StaticDirectoryHandler(echo.MustSubFS(e.Router.Filesystem, "market_frontend/dist"), false),
 			middleware.Gzip(),
-			ActivityLogger(app),
 		)
 		
 		return nil
