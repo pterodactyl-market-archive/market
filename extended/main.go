@@ -14,7 +14,7 @@ func main() {
 
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
 		subFs := echo.MustSubFS(e.Router.Filesystem, "public_data")
-		e.Router.GET("/*", apis.StaticDirectoryHandler(subFs, false))
+		e.Router.GET("/data/*", apis.StaticDirectoryHandler(subFs, false))
 
 		return nil
 	})
