@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"path"
 
 	"github.com/labstack/echo/v5"
 	"github.com/pocketbase/pocketbase"
@@ -13,6 +14,19 @@ import (
 	_ "github.com/pocketbase/pocketbase/statik"
 	"github.com/rakyll/statik/fs"
 )
+
+type indexWrapper struct {
+	assets http.FileSystem
+}
+
+func (i *indexWrapper) Open(name string) (http.File, error) {
+	ret, err := i.assets.Open(name)
+	if !os.IsNotExist(err) || path.Ext(name) != "" {
+		return ret, err
+	}
+
+	return i.assets.Open("/index.html")
+}
 
 func main() {
 	app := pocketbase.New()
@@ -35,7 +49,7 @@ func main() {
 			log.Fatal(err)
 		}
 		
-		h := http.FileServer(statikFS)
+		h := http.FileServer(&indexWrapper{statikFS})
 		e.Router.GET("/*", echo.WrapHandler(http.StripPrefix("/", h)))
 		
 		return nil
