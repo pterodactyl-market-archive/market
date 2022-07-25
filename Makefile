@@ -1,13 +1,11 @@
 .ONESHELL:
 .PHONY: statik
 
-statik:
+static:
 	rm -rf ./statik
 	cd ../market_frontend && yarn build-ci
-	statik -src=../market_frontend/dist
-	
-build:
-	../goreleaser --snapshot
+	statik -src=./dist
+	mv statik ../market_backend
 
 clean:
 	rm -rf ./statik
