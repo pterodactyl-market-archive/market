@@ -4,9 +4,9 @@ import (
 	"os"
 	"errors"
 	"log"
+	"net/http"
 
 	"github.com/labstack/echo/v5"
-	"github.com/labstack/echo/v5/middleware"
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/apis"
 	"github.com/pocketbase/pocketbase/core"
@@ -26,7 +26,9 @@ func main() {
 			}
 		}
 	
+		dataFs := echo.MustSubFS(e.Router.Filesystem, path)
 		e.Router.GET("/data/*", apis.StaticDirectoryHandler(dataFs, false))
+		
 		statikFS, err := fs.New()
 		
 		if err != nil {
