@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+	"errors"
 	"log"
 
 	"github.com/labstack/echo/v5"
@@ -13,7 +15,15 @@ func main() {
 	app := pocketbase.New()
 
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
-		subFs := echo.MustSubFS(e.Router.Filesystem, "public_data")
+		path := "public_data"
+		if _, err := os.Stat(path); errors.Is(err, os.ErrNotExist) {
+			err := os.Mkdir(path, os.ModePerm)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+		
+		subFs := echo.MustSubFS(e.Router.Filesystem, path)
 		e.Router.GET("/data/*", apis.StaticDirectoryHandler(subFs, false))
 
 		return nil
