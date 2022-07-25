@@ -27,11 +27,11 @@ func main() {
 		distFs := echo.MustSubFS(e.Router.Filesystem, "market_frontend/dist")
 		dataFs := echo.MustSubFS(e.Router.Filesystem, path)
 		
-		e.Router.GET("/*", echo.NotFoundHandler, middleware.StaticWithConfig(middleware.StaticConfig{
-			Root:   distFs,
-			Index:  "index.html",
-			Browse: false,
-			HTML5:  true,
+	   e.Router.GET("/*", apis.StaticDirectoryHandler(distFs, false), middleware.StaticWithConfig(middleware.StaticConfig{
+			Root:       "/",
+			Index:      "index.html",
+			Browse:     false,
+			HTML5:      true,
 		}))
 		
 		e.Router.GET("/data/*", apis.StaticDirectoryHandler(dataFs, false))
