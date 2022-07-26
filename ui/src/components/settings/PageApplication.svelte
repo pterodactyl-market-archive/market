@@ -76,30 +76,14 @@
                 <div class="loader" />
             {:else}
                 <div class="grid">
-                    <div class="col-lg-6">
-                        <Field class="form-field required" name="meta.appName" let:uniqueId>
-                            <label for={uniqueId}>Application name</label>
-                            <input
-                                type="text"
-                                id={uniqueId}
-                                required
-                                bind:value={formSettings.meta.appName}
-                            />
-                        </Field>
-                    </div>
-
-                    <div class="col-lg-6">
-                        <Field class="form-field required" name="meta.appUrl" let:uniqueId>
-                            <label for={uniqueId}>Application url</label>
-                            <input type="text" id={uniqueId} required bind:value={formSettings.meta.appUrl} />
-                        </Field>
-                    </div>
-
+                    <Field class="form-field required" name="meta.appUrl" let:uniqueId>
+                        <label for={uniqueId}>Application url</label>
+                        <input type="text" id={uniqueId} required bind:value={formSettings.meta.appUrl} />
+                    </Field>
                     <Field class="form-field required" name="logs.maxDays" let:uniqueId>
                         <label for={uniqueId}>Logs max days retention</label>
                         <input type="number" id={uniqueId} required bind:value={formSettings.logs.maxDays} />
                     </Field>
-
                     <div class="col-lg-12 flex">
                         <div class="flex-fill" />
                         <button

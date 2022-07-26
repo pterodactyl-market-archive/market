@@ -33,9 +33,9 @@ func BindUserApi(app core.App, rg *echo.Group) {
 	subGroup.POST("/confirm-email-change", api.confirmEmailChange)
 	subGroup.POST("/refresh", api.refresh, RequireUserAuth())
 	// crud
-	subGroup.GET("", api.list)
+	subGroup.GET("", api.list, RequireAdminAuth())
 	subGroup.POST("", api.create)
-	subGroup.GET("/:id", api.view)
+	subGroup.GET("/:id", api.view, RequireAdminOrOwnerAuth("id"))
 	subGroup.PATCH("/:id", api.update, RequireAdminOrOwnerAuth("id"))
 	subGroup.DELETE("/:id", api.delete, RequireAdminOrOwnerAuth("id"))
 }
