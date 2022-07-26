@@ -10,6 +10,32 @@ static:
 clean:
 	rm -rf ./statik
 
+build:
+	d=$$(date +%s)\
+	; rm -rf ./ui/dist
+	npm --prefix=./ui ci && npm --prefix=./ui run build
+	goreleaser --snapshot --rm-dist
+	rm ./dist/pocketbase_linux_arm64/pocketbase
+	rm ../pocketbase
+	mv dist/pocketbase_linux_amd64_v1/pocketbase ../
+	chmod +x ../pocketbase \
+	&& echo -e "\n\033[33;32mBuild completed in $$(($$(date +%s)-d)) seconds\e[0m"
+	
+binary:
+	d=$$(date +%s)\
+	; goreleaser --snapshot --rm-dist
+	rm ./dist/pocketbase_linux_arm64/pocketbase
+	rm ../pocketbase
+	mv dist/pocketbase_linux_amd64_v1/pocketbase ../
+	chmod +x ../pocketbase \
+	&& echo -e "\n\033[33;32mBuild completed in $$(($$(date +%s)-d)) seconds\e[0m"
+
+
+copy:
+	rm ../pocketbase
+	mv dist/pocketbase_linux_amd64_v1/pocketbase ../
+	chmod +x ../pocketbase
+
 lint:
 	golangci-lint run -c ./golangci.yml ./...
 
