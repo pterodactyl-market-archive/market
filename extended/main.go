@@ -59,6 +59,7 @@ func main() {
 	 
 		  group := e.Record.GetStringDataValue("group");
 		  sales := e.Record.GetStringDataValue("sales");
+		  publicEmail := e.Record.GetStringDataValue("publicEmail");
 	 
 		  originalRecord, err := app.Dao().FindRecordById(e.Record.Collection(), e.Record.Id, nil)
 		  if err != nil {
@@ -68,11 +69,30 @@ func main() {
 				e.Record.SetDataValue("group", originalRecord.GetStringDataValue("group"));
 		  }
 		  if sales != originalRecord.GetStringDataValue("sales") {
-				  e.Record.SetDataValue("sales", originalRecord.GetStringDataValue("sales"));
-			 }
+				e.Record.SetDataValue("sales", originalRecord.GetStringDataValue("sales"));
+		  }
+		  if publicEmail != originalRecord.GetStringDataValue("publicEmail") {
+				e.Record.SetDataValue("publicEmail", originalRecord.GetStringDataValue("publicEmail"));
+		  }
 	 
 		  return nil
 	 })
+	 
+	 
+	 app.OnUserBeforeUpdateRequest().Add(func(e *core.UserUpdateEvent) error {
+	 		collection, _ := app.Dao().FindCollectionByNameOrId("profiles")
+			record, _ := app.Dao().FindFirstRecordByData(collection, "id", e.User.Profile.Id)
+			
+			record.SetDataValue("publicEmail", e.User.Email)
+			err := app.Dao().SaveRecord(record)
+			
+			if err != nil {
+				return err
+			}
+			
+			return nil
+	  })
+	  
 
 	app.RootCmd.AddCommand(&cobra.Command{
 		Use: "verify",
