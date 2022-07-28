@@ -60,6 +60,7 @@ func main() {
 		  group := e.Record.GetStringDataValue("group");
 		  sales := e.Record.GetStringDataValue("sales");
 		  publicEmail := e.Record.GetStringDataValue("publicEmail");
+		  sellerStatus := e.Record.GetStringDataValue("seller_status");
 	 
 		  originalRecord, err := app.Dao().FindRecordById(e.Record.Collection(), e.Record.Id, nil)
 		  if err != nil {
@@ -73,6 +74,9 @@ func main() {
 		  }
 		  if publicEmail != originalRecord.GetStringDataValue("publicEmail") {
 				e.Record.SetDataValue("publicEmail", originalRecord.GetStringDataValue("publicEmail"));
+		  }
+		  if sellerStatus != originalRecord.GetStringDataValue("seller_status") {
+				  e.Record.SetDataValue("seller_status", originalRecord.GetStringDataValue("seller_status"));
 		  }
 	 
 		  return nil
