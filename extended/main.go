@@ -16,7 +16,9 @@ import (
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/models"
 	"github.com/pocketbase/pocketbase/tools/rest"
-	
+	"github.com/pocketbase/pocketbase/tools/security"
+
+	"github.com/golang-jwt/jwt/v4"
 	_ "github.com/pocketbase/pocketbase/statik"
 	"github.com/rakyll/statik/fs"
 	"github.com/spf13/cobra"
@@ -82,6 +84,27 @@ func main() {
 		  return nil
 	 })
 	 
+	 app.OnFileDownloadRequest().Add(func(e *core.FileDownloadEvent) error {
+		  token := e.HttpContext.QueryParam("token")
+		  collection, _ := app.Dao().FindCollectionByNameOrId("purchases")
+		  record, _ := app.Dao().FindFirstRecordByData(collection, "resource", e.HttpContext.QueryParam("download"))
+			 
+		  if (e.Record.Collection().Name != "files") {
+				  return nil
+		  }
+		  
+		  user, err := app.Dao().FindUserByToken(token, e.HttpContext.QueryParam("download"))
+		 
+		  if err != nil || user.Id != record.GetStringDataValue("user") {
+			  return rest.NewForbiddenError("Forbidden!", err)
+		  }
+		  
+		  if err != nil {
+				return rest.NewBadRequestError("Failed to download file.", err)
+		  }
+	 
+		  return nil
+	 })
 	 
 	 app.OnUserBeforeUpdateRequest().Add(func(e *core.UserUpdateEvent) error {
 	 		collection, _ := app.Dao().FindCollectionByNameOrId("profiles")
@@ -123,7 +146,7 @@ func main() {
 	})
 
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
-		path := "public_data"
+		path := "cdn"
 		if _, err := os.Stat(path); errors.Is(err, os.ErrNotExist) {
 			err := os.Mkdir(path, os.ModePerm)
 			if err != nil {
@@ -132,7 +155,7 @@ func main() {
 		}
 	
 		dataFs := echo.MustSubFS(e.Router.Filesystem, path)
-		e.Router.GET("/data/*", apis.StaticDirectoryHandler(dataFs, false), apis.ActivityLogger(app))
+		e.Router.GET("/cdn/*", apis.StaticDirectoryHandler(dataFs, false), apis.ActivityLogger(app))
 		
 		statikFS, err := fs.New()
 		
@@ -171,6 +194,38 @@ func main() {
 						apis.ActivityLogger(app),
 				  },
 			 })
+			 
+		e.Router.AddRoute(echo.Route{
+			Method: http.MethodGet,
+			Path:   "/api/download/:id",
+			Handler: func(c echo.Context) error {
+				collection, _ := app.Dao().FindCollectionByNameOrId("purchases")
+				record, _ := app.Dao().FindFirstRecordByData(collection, "resource", c.PathParam("id"))
+				user, _ := c.Get(apis.ContextUserKey).(*models.User)
+				id := c.PathParam("id")
+
+				if user.Id != record.GetStringDataValue("user") {
+					return rest.NewForbiddenError("Forbidden!", err)
+				}
+				
+				token, err := security.NewToken(
+					jwt.MapClaims{"id": user.Id, "type": "user"},
+					(user.TokenKey + id),
+					60,
+				)
+				if err != nil {
+					return rest.NewBadRequestError("Failed to create token.", err)
+				}
+		
+				return c.JSON(200, map[string]string{
+					"token": token,
+				})
+			},
+			Middlewares: []echo.MiddlewareFunc{
+				apis.RequireUserAuth(),
+			},
+		})
+
 
 		return nil
 	})
