@@ -7,10 +7,18 @@ import (
 	"net/http"
 	"path"
 	"fmt"
+	"strconv"
+	"strings"
+	"io/ioutil"
+	"encoding/json"
 
 	"github.com/labstack/echo/v5"
 	"github.com/labstack/echo/v5/middleware"
 	
+	"github.com/stripe/stripe-go/v72"
+	"github.com/stripe/stripe-go/v72/checkout/session"	
+	"github.com/stripe/stripe-go/v72/webhook"
+
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/apis"
 	"github.com/pocketbase/pocketbase/core"
@@ -61,7 +69,7 @@ func main() {
 	 
 		  group := e.Record.GetStringDataValue("group");
 		  sales := e.Record.GetStringDataValue("sales");
-		  publicEmail := e.Record.GetStringDataValue("publicEmail");
+		  publicEmail := e.Record.GetStringDataValue("public_email");
 		  sellerStatus := e.Record.GetStringDataValue("seller_status");
 	 
 		  originalRecord, err := app.Dao().FindRecordById(e.Record.Collection(), e.Record.Id, nil)
@@ -74,8 +82,8 @@ func main() {
 		  if sales != originalRecord.GetStringDataValue("sales") {
 				e.Record.SetDataValue("sales", originalRecord.GetStringDataValue("sales"));
 		  }
-		  if publicEmail != originalRecord.GetStringDataValue("publicEmail") {
-				e.Record.SetDataValue("publicEmail", originalRecord.GetStringDataValue("publicEmail"));
+		  if publicEmail != originalRecord.GetStringDataValue("public_email") {
+				e.Record.SetDataValue("public_email", originalRecord.GetStringDataValue("public_email"));
 		  }
 		  if sellerStatus != originalRecord.GetStringDataValue("seller_status") {
 				  e.Record.SetDataValue("seller_status", originalRecord.GetStringDataValue("seller_status"));
@@ -90,13 +98,13 @@ func main() {
 		  record, _ := app.Dao().FindFirstRecordByData(collection, "resource", e.HttpContext.QueryParam("download"))
 			 
 		  if (e.Record.Collection().Name != "files") {
-				  return nil
+				return nil
 		  }
 		  
 		  user, err := app.Dao().FindUserByToken(token, e.HttpContext.QueryParam("download"))
 		 
 		  if err != nil || user.Id != record.GetStringDataValue("user") {
-			  return rest.NewForbiddenError("Forbidden!", err)
+				return rest.NewForbiddenError("Forbidden!", err)
 		  }
 		  
 		  if err != nil {
@@ -156,7 +164,7 @@ func main() {
 	
 		dataFs := echo.MustSubFS(e.Router.Filesystem, path)
 		e.Router.GET("/cdn/*", apis.StaticDirectoryHandler(dataFs, false), apis.ActivityLogger(app))
-		
+
 		statikFS, err := fs.New()
 		
 		if err != nil {
@@ -165,7 +173,7 @@ func main() {
 		
 		h := http.FileServer(&indexWrapper{statikFS})
 		e.Router.GET("/*", echo.WrapHandler(http.StripPrefix("/", h)), middleware.Gzip(), apis.ActivityLogger(app))
-		  
+
 		 e.Router.AddRoute(echo.Route{
 				  Method: http.MethodGet,
 				  Path:   "/api/profile/:id",
@@ -194,7 +202,130 @@ func main() {
 						apis.ActivityLogger(app),
 				  },
 			 })
-			 
+			
+		e.Router.AddRoute(echo.Route{
+			Method: http.MethodPost,
+			Path:   "/api/stripe/webhook",
+			Handler: func(c echo.Context) error {
+				  payload, err := ioutil.ReadAll(c.Request().Body)
+				  
+				  if err != nil {
+					 fmt.Fprintf(os.Stderr, "Error reading request body: %v\n", err)
+					 c.Response().WriteHeader(http.StatusServiceUnavailable)
+					 return nil
+				  }
+				
+				  endpointSecret := "whsec_r157djSeTujZgrcuIochNPzanxToWxDZ";
+				  event, err := webhook.ConstructEvent(payload, c.Request().Header.Get("Stripe-Signature"),
+					 endpointSecret)
+				
+				  if err != nil {
+					 fmt.Fprintf(os.Stderr, "Error verifying webhook signature: %v\n", err)
+					 c.Response().WriteHeader(http.StatusBadRequest) 
+					 return nil
+				  }
+				
+				  if event.Type == "checkout.session.completed" {
+						var session stripe.CheckoutSession
+						err := json.Unmarshal(event.Data.Raw, &session)
+						if err != nil {
+						  fmt.Fprintf(os.Stderr, "Error parsing webhook JSON: %v\n", err)
+						  c.Response().WriteHeader(http.StatusBadRequest)
+						  return rest.NewBadRequestError("Failed to purchase, contact a admin.", err)
+						}
+						
+						resources, _ := app.Dao().FindCollectionByNameOrId("resources")
+						purchases, _ := app.Dao().FindCollectionByNameOrId("purchases")
+						profiles, _ := app.Dao().FindCollectionByNameOrId("profiles")
+						record, _ := app.Dao().FindFirstRecordByData(resources, "id", session.Metadata["product_id"])
+						seller, _ := app.Dao().FindFirstRecordByData(profiles, "id", record.GetStringDataValue("profile"))
+						sales, _ := strconv.Atoi(seller.GetStringDataValue("sales"))
+				 	   purchase := models.NewRecord(purchases)
+						
+						purchase.SetDataValue("resource", session.Metadata["product_id"])
+						purchase.SetDataValue("user", session.Metadata["purchaser"])
+						err = app.Dao().SaveRecord(purchase)
+						
+						seller.SetDataValue("sales", sales + 1)
+						err = app.Dao().SaveRecord(seller)
+						
+						 
+						 if err != nil {
+							 fmt.Fprintf(os.Stderr, "Error while saving DB: %v\n", err)
+							 return rest.NewBadRequestError("Failed to purchase, contact a admin.", err)
+						 }
+						 
+						 return c.JSON(http.StatusOK, map[string]string{
+							 "user_id": session.Metadata["purchaser"],
+							 "seller": record.GetStringDataValue("profile"),
+							 "resource": session.Metadata["product_id"],
+							 "sales": seller.GetStringDataValue("sales"),
+						 })
+					}
+					
+					if event.Type == "checkout.session.expired" {		
+						 return c.JSON(http.StatusBadRequest, map[string]string{
+						 "session": "expired",
+					 })
+					}
+				
+				  return c.NoContent(http.StatusOK)
+			},
+			Middlewares: []echo.MiddlewareFunc{
+				apis.ActivityLogger(app),
+				middleware.BodyLimit(int64(65536)),
+			},
+		})			
+						 
+		e.Router.AddRoute(echo.Route{
+			Method: http.MethodPost,
+			Path:   "/api/checkout/:id",
+			Handler: func(c echo.Context) error {
+			  resources, _ := app.Dao().FindCollectionByNameOrId("resources")
+			  record, _ := app.Dao().FindFirstRecordByData(resources, "id", c.PathParam("id"))
+			  price, _ := strconv.ParseInt(strings.Split(record.GetStringDataValue("price"), ".")[0], 10, 64)
+			  user, _ := c.Get(apis.ContextUserKey).(*models.User)
+			  
+			  stripe.Key = "sk_test_51LSoEhIquXPpAf2YG1clEz3qmBtybltqa5iq579kHunMZBZ7U94m5USrzxQAHCy4V0qz2Cmd6TySv0N67ZGw0EqX006Hzcnbrt"
+			  domain := "http://104.248.142.88"
+			  params := &stripe.CheckoutSessionParams{
+				 LineItems: []*stripe.CheckoutSessionLineItemParams{
+					&stripe.CheckoutSessionLineItemParams{
+					  PriceData: &stripe.CheckoutSessionLineItemPriceDataParams{
+						 Currency: stripe.String(string(stripe.CurrencyUSD)),
+						 UnitAmount: stripe.Int64(price),
+						 ProductData: &stripe.CheckoutSessionLineItemPriceDataProductDataParams{
+							Name: stripe.String(record.GetStringDataValue("name")),
+						 },
+					  },
+					  Quantity: stripe.Int64(1),
+					},
+				 },
+				 CustomerEmail: stripe.String(user.Email),
+				 Mode: stripe.String(string(stripe.CheckoutSessionModePayment)),
+				 SuccessURL: stripe.String(domain + "/success"),
+				 CancelURL: stripe.String(domain + "/cancelled"),
+			  }
+			
+			  params.AddMetadata("purchaser", user.Id)
+			  params.AddMetadata("product_id", c.PathParam("id"))
+			  s, err := session.New(params)
+			
+			  if err != nil {
+				 log.Printf("session.New: %v", err)
+			  }
+			  			
+			  return c.JSON(http.StatusOK, map[string]string{
+				  "session": s.URL,
+				  "id": s.ID,
+			  })
+			},
+			Middlewares: []echo.MiddlewareFunc{
+				apis.RequireUserAuth(),
+				apis.ActivityLogger(app),
+			},
+		})		
+		
 		e.Router.AddRoute(echo.Route{
 			Method: http.MethodGet,
 			Path:   "/api/download/:id",
@@ -203,7 +334,7 @@ func main() {
 				record, _ := app.Dao().FindFirstRecordByData(collection, "resource", c.PathParam("id"))
 				user, _ := c.Get(apis.ContextUserKey).(*models.User)
 				id := c.PathParam("id")
-
+		
 				if user.Id != record.GetStringDataValue("user") {
 					return rest.NewForbiddenError("Forbidden!", err)
 				}
@@ -217,12 +348,13 @@ func main() {
 					return rest.NewBadRequestError("Failed to create token.", err)
 				}
 		
-				return c.JSON(200, map[string]string{
+				return c.JSON(http.StatusOK, map[string]string{
 					"token": token,
 				})
 			},
 			Middlewares: []echo.MiddlewareFunc{
 				apis.RequireUserAuth(),
+				apis.ActivityLogger(app),
 			},
 		})
 
