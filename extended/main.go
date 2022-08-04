@@ -277,7 +277,8 @@ func main() {
 						purchase.SetDataValue("user", session.Metadata["purchaser"])
 						
 						if (!IsRecordUnique(app.Dao(), purchase)) {
-						   return c.JSON(409, map[string]interface{}{
+						   return c.JSON(200, map[string]interface{}{
+								 "message": "sending 200 status to disable stripe retry."
 								 "duplicate": true,
 							 })
 						}
