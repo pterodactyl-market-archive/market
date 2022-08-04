@@ -278,7 +278,7 @@ func main() {
 						
 						if (!IsRecordUnique(app.Dao(), purchase)) {
 						   return c.JSON(200, map[string]interface{}{
-								 "message": "sending 200 status to disable stripe retry."
+								 "message": "sending 200 status to disable stripe retry.",
 								 "duplicate": true,
 							 })
 						}
