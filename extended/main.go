@@ -114,16 +114,16 @@ func main() {
 	 })
 	 
 	 app.OnFileDownloadRequest().Add(func(e *core.FileDownloadEvent) error {
+		  if (e.Record.Collection().Name != "files") {
+				return nil
+		  }
+		  
 		  token := e.HttpContext.QueryParam("token")
 		  collection, _ := app.Dao().FindCollectionByNameOrId("purchases")
 		  resources, _ := app.Dao().FindCollectionByNameOrId("resources")
 		  record, _ := app.Dao().FindFirstRecordByData(collection, "resource", e.HttpContext.QueryParam("download"))
 		  resource, _ := app.Dao().FindFirstRecordByData(resources, "id", e.HttpContext.QueryParam("download"))
 		  downloads, _ := strconv.Atoi(resource.GetStringDataValue("downloads"))
-
-		  if (e.Record.Collection().Name != "files") {
-				return nil
-		  }
 		  
 		  user, err := app.Dao().FindUserByToken(token, e.HttpContext.QueryParam("download"))
 		 
@@ -317,7 +317,7 @@ func main() {
 						 
 		e.Router.AddRoute(echo.Route{
 			Method: http.MethodPost,
-			Path:   "/api/checkout/:id",
+			Path:   "/api/checkout/stripe/:id",
 			Handler: func(c echo.Context) error {
 			  resources, _ := app.Dao().FindCollectionByNameOrId("resources")
 			  purchases, _ := app.Dao().FindCollectionByNameOrId("purchases")
@@ -337,7 +337,7 @@ func main() {
 			  }
 			  
 			  stripe.Key = "sk_test_51LSoEhIquXPpAf2YG1clEz3qmBtybltqa5iq579kHunMZBZ7U94m5USrzxQAHCy4V0qz2Cmd6TySv0N67ZGw0EqX006Hzcnbrt"
-			  domain := "http://104.248.142.88"
+			  domain := "https://beta.pterodactylmarket.com"
 			  params := &stripe.CheckoutSessionParams{
 				 LineItems: []*stripe.CheckoutSessionLineItemParams{
 					&stripe.CheckoutSessionLineItemParams{
