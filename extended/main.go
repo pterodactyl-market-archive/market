@@ -20,9 +20,11 @@ import (
 	"github.com/stripe/stripe-go/v72/webhook"
 
 	"github.com/pocketbase/pocketbase"
+	"github.com/pocketbase/dbx"
 	"github.com/pocketbase/pocketbase/apis"
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/models"
+	"github.com/pocketbase/pocketbase/daos"
 	"github.com/pocketbase/pocketbase/tools/rest"
 	"github.com/pocketbase/pocketbase/tools/security"
 
@@ -43,6 +45,25 @@ func (i *indexWrapper) Open(name string) (http.File, error) {
 	}
 
 	return i.assets.Open("/index.html")
+}
+
+func IsRecordUnique(dao *daos.Dao, record *models.Record) bool {
+	var exists bool
+
+	expr := dbx.HashExp{}
+	data := record.Data()
+	for k, v := range data {
+		expr[k] = v
+	}
+
+	err := dao.RecordQuery(record.Collection()).
+		Select("count(*)").
+		AndWhere(dbx.Not(dbx.HashExp{"id": record.Id})).
+		AndWhere(expr).
+		Limit(1).
+		Row(&exists)
+
+	return err == nil && !exists
 }
 
 const (
@@ -95,8 +116,11 @@ func main() {
 	 app.OnFileDownloadRequest().Add(func(e *core.FileDownloadEvent) error {
 		  token := e.HttpContext.QueryParam("token")
 		  collection, _ := app.Dao().FindCollectionByNameOrId("purchases")
+		  resources, _ := app.Dao().FindCollectionByNameOrId("resources")
 		  record, _ := app.Dao().FindFirstRecordByData(collection, "resource", e.HttpContext.QueryParam("download"))
-			 
+		  resource, _ := app.Dao().FindFirstRecordByData(resources, "id", e.HttpContext.QueryParam("download"))
+		  downloads, _ := strconv.Atoi(resource.GetStringDataValue("downloads"))
+
 		  if (e.Record.Collection().Name != "files") {
 				return nil
 		  }
@@ -110,7 +134,14 @@ func main() {
 		  if err != nil {
 				return rest.NewBadRequestError("Failed to download file.", err)
 		  }
-	 
+		  
+		  resource.SetDataValue("downloads", downloads + 1)
+		  err = app.Dao().SaveRecord(resource)
+		  
+		  if err != nil {
+				return rest.NewBadRequestError("Failed to purchase, contact a admin.", err)
+			}
+		  
 		  return nil
 	 })
 	 
@@ -118,7 +149,7 @@ func main() {
 	 		collection, _ := app.Dao().FindCollectionByNameOrId("profiles")
 			record, _ := app.Dao().FindFirstRecordByData(collection, "id", e.User.Profile.Id)
 			
-			record.SetDataValue("publicEmail", e.User.Email)
+			record.SetDataValue("public_email", e.User.Email)
 			err := app.Dao().SaveRecord(record)
 			
 			if err != nil {
@@ -244,12 +275,18 @@ func main() {
 						
 						purchase.SetDataValue("resource", session.Metadata["product_id"])
 						purchase.SetDataValue("user", session.Metadata["purchaser"])
+						
+						if (!IsRecordUnique(app.Dao(), purchase)) {
+						   return c.JSON(409, map[string]interface{}{
+								 "duplicate": true,
+							 })
+						}
+						
 						err = app.Dao().SaveRecord(purchase)
 						
 						seller.SetDataValue("sales", sales + 1)
 						err = app.Dao().SaveRecord(seller)
 						
-						 
 						 if err != nil {
 							 fmt.Fprintf(os.Stderr, "Error while saving DB: %v\n", err)
 							 return rest.NewBadRequestError("Failed to purchase, contact a admin.", err)
@@ -264,8 +301,8 @@ func main() {
 					}
 					
 					if event.Type == "checkout.session.expired" {		
-						 return c.JSON(http.StatusBadRequest, map[string]string{
-						 "session": "expired",
+						 return c.JSON(http.StatusBadRequest, map[string]interface{}{
+						 "session": map[string]interface{}{"expired": true},
 					 })
 					}
 				
@@ -282,9 +319,21 @@ func main() {
 			Path:   "/api/checkout/:id",
 			Handler: func(c echo.Context) error {
 			  resources, _ := app.Dao().FindCollectionByNameOrId("resources")
+			  purchases, _ := app.Dao().FindCollectionByNameOrId("purchases")
 			  record, _ := app.Dao().FindFirstRecordByData(resources, "id", c.PathParam("id"))
 			  price, _ := strconv.ParseInt(strings.Split(record.GetStringDataValue("price"), ".")[0], 10, 64)
 			  user, _ := c.Get(apis.ContextUserKey).(*models.User)
+			  
+			  expr := dbx.HashExp{"user": user.Id, "resource": c.PathParam("id")}
+			  purchase, _ := app.Dao().FindRecordsByExpr(purchases, expr)
+			  
+			  if (len(purchase) > 0) {
+				  return c.JSON(409, map[string]interface{}{
+					    "duplicate": true,
+						 "error": "Resource already purchased.",
+						 "resource": c.PathParam("id"),
+					 })
+			  }
 			  
 			  stripe.Key = "sk_test_51LSoEhIquXPpAf2YG1clEz3qmBtybltqa5iq579kHunMZBZ7U94m5USrzxQAHCy4V0qz2Cmd6TySv0N67ZGw0EqX006Hzcnbrt"
 			  domain := "http://104.248.142.88"
