@@ -268,36 +268,40 @@ func main() {
 						resources, _ := app.Dao().FindCollectionByNameOrId("resources")
 						purchases, _ := app.Dao().FindCollectionByNameOrId("purchases")
 						profiles, _ := app.Dao().FindCollectionByNameOrId("profiles")
-						record, _ := app.Dao().FindFirstRecordByData(resources, "id", session.Metadata["product_id"])
-						seller, _ := app.Dao().FindFirstRecordByData(profiles, "id", record.GetStringDataValue("profile"))
-						sales, _ := strconv.Atoi(seller.GetStringDataValue("sales"))
-				 	   purchase := models.NewRecord(purchases)
+						checkout_arr := strings.Split(session.Metadata["product_id"], ",")
 						
-						purchase.SetDataValue("resource", session.Metadata["product_id"])
-						purchase.SetDataValue("user", session.Metadata["purchaser"])
-						
-						if (!IsRecordUnique(app.Dao(), purchase)) {
-						   return c.JSON(200, map[string]interface{}{
-								 "message": "sending 200 status to disable stripe retry.",
-								 "duplicate": true,
-							 })
+						for _, element := range checkout_arr {
+							purchase := models.NewRecord(purchases)
+							purchase.SetDataValue("resource", element)
+							purchase.SetDataValue("user", session.Metadata["purchaser"])
+													
+							if (!IsRecordUnique(app.Dao(), purchase)) {
+								return c.JSON(200, map[string]interface{}{
+									 "message": "sending 200 status to disable stripe retry.",
+									 "duplicate": true,
+								 })
+							}
+							
+							err = app.Dao().SaveRecord(purchase)
 						}
 						
-						err = app.Dao().SaveRecord(purchase)
-						
-						seller.SetDataValue("sales", sales + 1)
-						err = app.Dao().SaveRecord(seller)
-						
-						 if err != nil {
-							 fmt.Fprintf(os.Stderr, "Error while saving DB: %v\n", err)
-							 return rest.NewBadRequestError("Failed to purchase, contact a admin.", err)
-						 }
+						for _, element := range checkout_arr {
+							record, _ := app.Dao().FindFirstRecordByData(resources, "id", element)
+							seller, _ := app.Dao().FindFirstRecordByData(profiles, "id", record.GetStringDataValue("profile"))
+							sales, _ := strconv.Atoi(seller.GetStringDataValue("sales"))
+							
+							seller.SetDataValue("sales", sales + 1)
+							err = app.Dao().SaveRecord(seller)
+							
+							 if err != nil {
+								 fmt.Fprintf(os.Stderr, "Error while saving DB: %v\n", err)
+								 return rest.NewBadRequestError("Failed to purchase, contact a admin.", err)
+							 }
+						}
 						 
-						 return c.JSON(http.StatusOK, map[string]string{
-							 "user_id": session.Metadata["purchaser"],
-							 "seller": record.GetStringDataValue("profile"),
-							 "resource": session.Metadata["product_id"],
-							 "sales": seller.GetStringDataValue("sales"),
+						 return c.JSON(http.StatusOK, map[string]interface{}{
+							 "message": "successful checkout",
+							 "resource": checkout_arr,
 						 })
 					}
 					
@@ -321,36 +325,44 @@ func main() {
 			Handler: func(c echo.Context) error {
 			  resources, _ := app.Dao().FindCollectionByNameOrId("resources")
 			  purchases, _ := app.Dao().FindCollectionByNameOrId("purchases")
-			  record, _ := app.Dao().FindFirstRecordByData(resources, "id", c.PathParam("id"))
-			  price, _ := strconv.ParseInt(strings.Split(record.GetStringDataValue("price"), ".")[0], 10, 64)
 			  user, _ := c.Get(apis.ContextUserKey).(*models.User)
-			  
-			  expr := dbx.HashExp{"user": user.Id, "resource": c.PathParam("id")}
-			  purchase, _ := app.Dao().FindRecordsByExpr(purchases, expr)
-			  
-			  if (len(purchase) > 0) {
-				  return c.JSON(409, map[string]interface{}{
-					    "duplicate": true,
-						 "error": "Resource already purchased.",
-						 "resource": c.PathParam("id"),
-					 })
-			  }
+			  checkout_arr := strings.Split(c.PathParam("id"), ",")
+			  var StripeLineItems []*stripe.CheckoutSessionLineItemParams
+
+			  for _, element := range checkout_arr {					 
+					 expr := dbx.HashExp{"user": user.Id, "resource": element}
+					 purchase, _ := app.Dao().FindRecordsByExpr(purchases, expr)
+					 
+					 if (len(purchase) > 0) {
+							return c.JSON(409, map[string]interface{}{
+								  "duplicate": true,
+								  "error": "Resource already purchased.",
+								  "resource": c.PathParam("id"),
+							  })
+						}
+				}
+				
+				for _, element := range checkout_arr {
+					 record, _ := app.Dao().FindFirstRecordByData(resources, "id", element)
+					 price, _ := strconv.ParseInt(strings.Split(record.GetStringDataValue("price"), ".")[0], 10, 64)
+					  
+					 StripeLineItems = append(StripeLineItems, &stripe.CheckoutSessionLineItemParams{
+						  PriceData: &stripe.CheckoutSessionLineItemPriceDataParams{
+							Currency: stripe.String(string(stripe.CurrencyUSD)),
+							UnitAmount: stripe.Int64(price),
+							ProductData: &stripe.CheckoutSessionLineItemPriceDataProductDataParams{
+							  Name: stripe.String(record.GetStringDataValue("name")),
+							},
+						 },
+						 Quantity: stripe.Int64(1),
+						 },
+					 )	 
+				 }
 			  
 			  stripe.Key = "sk_test_51LSoEhIquXPpAf2YG1clEz3qmBtybltqa5iq579kHunMZBZ7U94m5USrzxQAHCy4V0qz2Cmd6TySv0N67ZGw0EqX006Hzcnbrt"
 			  domain := "https://beta.pterodactylmarket.com"
 			  params := &stripe.CheckoutSessionParams{
-				 LineItems: []*stripe.CheckoutSessionLineItemParams{
-					&stripe.CheckoutSessionLineItemParams{
-					  PriceData: &stripe.CheckoutSessionLineItemPriceDataParams{
-						 Currency: stripe.String(string(stripe.CurrencyUSD)),
-						 UnitAmount: stripe.Int64(price),
-						 ProductData: &stripe.CheckoutSessionLineItemPriceDataProductDataParams{
-							Name: stripe.String(record.GetStringDataValue("name")),
-						 },
-					  },
-					  Quantity: stripe.Int64(1),
-					},
-				 },
+				 LineItems: StripeLineItems,
 				 CustomerEmail: stripe.String(user.Email),
 				 Mode: stripe.String(string(stripe.CheckoutSessionModePayment)),
 				 SuccessURL: stripe.String(domain + "/success"),
@@ -365,7 +377,8 @@ func main() {
 				 log.Printf("session.New: %v", err)
 			  }
 			  			
-			  return c.JSON(http.StatusOK, map[string]string{
+			  return c.JSON(http.StatusOK, map[string]interface{}{
+				  "products": checkout_arr,
 				  "session": s.URL,
 				  "id": s.ID,
 			  })
