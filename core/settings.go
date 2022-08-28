@@ -42,16 +42,15 @@ type Settings struct {
 func NewSettings() *Settings {
 	return &Settings{
 		Meta: MetaConfig{
-			AppName:                    "Acme",
-			AppUrl:                     "http://localhost:8090",
+			AppName:                   "Pterodactyl Market",
+			AppUrl:                    "http://127.0.0.1:80",
 			HideControls:               false,
-			SenderName:                 "Support",
-			SenderAddress:              "support@example.com",
+			SenderName:                "Support",
+			SenderAddress:             "support@pterodactylmarket.com",
 			VerificationTemplate:       defaultVerificationTemplate,
 			ResetPasswordTemplate:      defaultResetPasswordTemplate,
 			ConfirmEmailChangeTemplate: defaultConfirmEmailChangeTemplate,
 		},
-
 		Logs: LogsConfig{
 			MaxDays: 7,
 		},

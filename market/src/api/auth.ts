@@ -20,6 +20,14 @@ const authenticateEmail = (email: string, password: string) => {
 		.json();
 };
 
+const authenticateOauth = (provider: string, code: string, codeVerifier: string, redirectUrl: string) => {
+	return ky
+		.post(`${!isProduction ? 'https://beta.pterodactylmarket.com' : ''}/api/users/auth-via-oauth2`, {
+			json: { provider: provider, code: code, codeVerifier: codeVerifier, redirectUrl: redirectUrl },
+		})
+		.json();
+};
+
 const signOut = () => {
 	localStorage.removeItem('pterodactyl_market_auth');
 	store.getActions().user.reset();
@@ -38,4 +46,4 @@ const refreshUser = (userAuthToken: string | null) => {
 	return token.post(`${!isProduction ? 'https://beta.pterodactylmarket.com' : ''}/api/users/refresh`).json();
 };
 
-export { registerUser, authenticateEmail, signOut, refreshUser };
+export { registerUser, authenticateEmail, authenticateOauth, signOut, refreshUser };

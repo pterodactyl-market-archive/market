@@ -17,6 +17,7 @@ require (
 	github.com/pocketbase/dbx v1.6.0
 	github.com/spf13/cast v1.5.0
 	github.com/spf13/cobra v1.5.0
+	github.com/stripe/stripe-go/v72 v72.122.0
 	gocloud.dev v0.26.0
 	golang.org/x/crypto v0.0.0-20220824171710-5757bc0c5503
 	golang.org/x/net v0.0.0-20220822230855-b0a4917ee28c

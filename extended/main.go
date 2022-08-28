@@ -195,12 +195,9 @@ func main() {
 		dataFs := echo.MustSubFS(e.Router.Filesystem, path)
 		e.Router.GET("/cdn/*", apis.StaticDirectoryHandler(dataFs, false), apis.ActivityLogger(app))
 		
-		e.Router.GET(
-			"/*",
-			echo.StaticDirectoryHandler(market.DistDirFS, false),
-			middleware.Gzip(),
-			apis.ActivityLogger(app),
-		)
+		httpFS := http.FS(market.DistDirFS)
+		h := http.FileServer(&indexWrapper{httpFS})
+		e.Router.GET("/*", echo.WrapHandler(http.StripPrefix("/", h)), middleware.Gzip(), apis.ActivityLogger(app))
 
 		 e.Router.AddRoute(echo.Route{
 				  Method: http.MethodGet,

@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cast"
 )
 
-const trailedAdminPath = "/_/"
+const trailedAdminPath = "/admin/"
 
 // InitApi creates a configured echo instance with registered
 // system and app specific routes and middlewares.

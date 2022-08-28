@@ -5,8 +5,7 @@ import Page from '@/components/Page';
 import { refreshUser } from '@/api/auth';
 import { MarketRouter } from '@/routers';
 import { useStoreState } from 'easy-peasy';
-import { Offline } from 'react-detect-offline';
-import { Login } from '@/components/pages/auth';
+import { Login, Oauth } from '@/components/pages/auth';
 import { Base } from '@/components/pages/market';
 import { store, ApplicationStore } from '@/state';
 import { isProduction, debounce } from '@/helpers';
@@ -17,7 +16,6 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 const App = () => {
 	const [loaded, setLoaded] = useState(false);
 	const [visible, setVisible] = useState(false);
-	const [connectionError, setConnectionError] = useState(false);
 	const UserData = useStoreState((state: ApplicationStore) => state.user.data);
 
 	useEffect(() => {
@@ -115,6 +113,7 @@ const App = () => {
 										</div>
 									}
 								/>
+								<Route path='/auth/oauth/:provider' element={<Page component={Oauth} title='Logging in...' />} />
 							</Fragment>
 						)}
 					</Routes>

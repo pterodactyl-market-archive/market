@@ -28,7 +28,7 @@ func NewServeCommand(app core.App, showStartBanner bool) *cobra.Command {
 
 	command := &cobra.Command{
 		Use:   "serve",
-		Short: "Starts the web server (default to 127.0.0.1:8090)",
+		Short: "Starts the web server (default to 127.0.0.1:80)",
 		Run: func(command *cobra.Command, args []string) {
 			// ensure that the latest migrations are applied before starting the server
 			if err := runMigrations(app); err != nil {
@@ -88,9 +88,10 @@ func NewServeCommand(app core.App, showStartBanner bool) *cobra.Command {
 					schema = "https"
 				}
 				bold := color.New(color.Bold).Add(color.FgGreen)
-				bold.Printf("> Server started at: %s\n", color.CyanString("%s://%s", schema, serverConfig.Addr))
+				bold.Println("\033[1;90m➜ \033 \033[1;34mPterodactyl Market\033 \033[1;90m || \033 \033[1;32mServer started\033")
 				fmt.Printf("  - REST API: %s\n", color.CyanString("%s://%s/api/", schema, serverConfig.Addr))
-				fmt.Printf("  - Admin UI: %s\n", color.CyanString("%s://%s/_/", schema, serverConfig.Addr))
+				fmt.Printf("  - Market Frontend: %s\n", color.CyanString("%s://%s/", schema, serverConfig.Addr))
+				fmt.Printf("  - Admin UI: %s\n", color.CyanString("%s://%s/admin/", schema, serverConfig.Addr))
 			}
 
 			var serveErr error
