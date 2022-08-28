@@ -1,13 +1,13 @@
 project_name: pocketbase
 
-dist: .builds
+dist: dist
 
 before:
   hooks:
     - go mod tidy
 
 builds:
-  - main: ./examples/base
+  - main: ./extended/main.go
     binary: pocketbase
     ldflags:
       - -s -w -X github.com/pocketbase/pocketbase.Version={{ .Version }}
@@ -15,38 +15,12 @@ builds:
       - CGO_ENABLED=0
     goos:
       - linux
-      - windows
-      - darwin
     goarch:
       - amd64
       - arm64
-      - arm
-    goarm:
-      - 7
-    ignore:
-      - goos: windows
-        goarch: arm
-      - goos: darwin
-        goarch: arm
-
-release:
-  draft: true
 
 archives:
-  - format: zip
-    files:
-      - LICENSE*
-      - CHANGELOG*
-
-checksum:
-  name_template: 'checksums.txt'
+- format: binary
 
 snapshot:
   name_template: '{{ incpatch .Version }}-next'
-
-changelog:
-  sort: asc
-  filters:
-    exclude:
-      - '^examples:'
-      - '^ui:'
