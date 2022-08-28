@@ -16,21 +16,22 @@ import (
 	"github.com/labstack/echo/v5/middleware"
 	
 	"github.com/stripe/stripe-go/v72"
-	"github.com/stripe/stripe-go/v72/checkout/session"	
+	"github.com/stripe/stripe-go/v72/checkout/session"
 	"github.com/stripe/stripe-go/v72/webhook"
 
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/dbx"
 	"github.com/pocketbase/pocketbase/apis"
 	"github.com/pocketbase/pocketbase/core"
+	"github.com/pocketbase/pocketbase/market"
 	"github.com/pocketbase/pocketbase/models"
 	"github.com/pocketbase/pocketbase/daos"
 	"github.com/pocketbase/pocketbase/tools/rest"
 	"github.com/pocketbase/pocketbase/tools/security"
 
 	"github.com/golang-jwt/jwt/v4"
-	_ "github.com/pocketbase/pocketbase/statik"
-	"github.com/rakyll/statik/fs"
+	// _ "github.com/pocketbase/pocketbase/statik"
+	// "github.com/rakyll/statik/fs"
 	"github.com/spf13/cobra"
 )
 
@@ -196,14 +197,21 @@ func main() {
 		dataFs := echo.MustSubFS(e.Router.Filesystem, path)
 		e.Router.GET("/cdn/*", apis.StaticDirectoryHandler(dataFs, false), apis.ActivityLogger(app))
 
-		statikFS, err := fs.New()
+		// statikFS, err := fs.New()
+		// 
+		// if err != nil {
+		// 	log.Fatal(err)
+		// }
+		// 
+		// h := http.FileServer(&indexWrapper{statikFS})
+		// e.Router.GET("/old/*", echo.WrapHandler(http.StripPrefix("/", h)), middleware.Gzip(), apis.ActivityLogger(app))
 		
-		if err != nil {
-			log.Fatal(err)
-		}
-		
-		h := http.FileServer(&indexWrapper{statikFS})
-		e.Router.GET("/*", echo.WrapHandler(http.StripPrefix("/", h)), middleware.Gzip(), apis.ActivityLogger(app))
+		e.Router.GET(
+			"/*",
+			echo.StaticDirectoryHandler(market.DistDirFS, false),
+			middleware.Gzip(),
+			apis.ActivityLogger(app),
+		)
 
 		 e.Router.AddRoute(echo.Route{
 				  Method: http.MethodGet,
@@ -393,7 +401,7 @@ func main() {
 			Method: http.MethodGet,
 			Path:   "/api/download/:id",
 			Handler: func(c echo.Context) error {
-				collection, _ := app.Dao().FindCollectionByNameOrId("purchases")
+				collection, err := app.Dao().FindCollectionByNameOrId("purchases")
 				record, _ := app.Dao().FindFirstRecordByData(collection, "resource", c.PathParam("id"))
 				user, _ := c.Get(apis.ContextUserKey).(*models.User)
 				id := c.PathParam("id")

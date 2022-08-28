@@ -88,7 +88,7 @@ func NewServeCommand(app core.App, showStartBanner bool) *cobra.Command {
 					schema = "https"
 				}
 				bold := color.New(color.Bold).Add(color.FgGreen)
-				bold.Printf("> Server started at: %s\n", color.CyanString("%s://%s", schema, serverConfig.Addr))
+				bold.Println("\033[1;90m➜ \033 \033[1;34mPterodactyl Market\033 \033[1;90m || \033 \033[1;32mServer started\033")
 				fmt.Printf("  - REST API: %s\n", color.CyanString("%s://%s/api/", schema, serverConfig.Addr))
 				fmt.Printf("  - Market Frontend: %s\n", color.CyanString("%s://%s/", schema, serverConfig.Addr))
 				fmt.Printf("  - Admin UI: %s\n", color.CyanString("%s://%s/admin/", schema, serverConfig.Addr))

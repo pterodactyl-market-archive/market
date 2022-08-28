@@ -15,7 +15,6 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.14
 	github.com/microcosm-cc/bluemonday v1.0.19
 	github.com/pocketbase/dbx v1.6.0
-	github.com/rakyll/statik v0.1.7
 	github.com/spf13/cast v1.5.0
 	github.com/spf13/cobra v1.5.0
 	github.com/stripe/stripe-go/v72 v72.122.0
