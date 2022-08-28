@@ -15,9 +15,9 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.14
 	github.com/microcosm-cc/bluemonday v1.0.19
 	github.com/pocketbase/dbx v1.6.0
-	github.com/rakyll/statik v0.1.7
 	github.com/spf13/cast v1.5.0
 	github.com/spf13/cobra v1.5.0
+	github.com/stripe/stripe-go/v72 v72.122.0
 	gocloud.dev v0.25.0
 	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d
 	golang.org/x/oauth2 v0.0.0-20220630143837-2104d58473e0

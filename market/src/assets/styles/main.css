@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* change autocomplete styles*/
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+	border: 1px solid white;
+	-webkit-text-fill-color: #2b6490;
+	-webkit-box-shadow: 0 0 0px 1000px white inset;
+	box-shadow: 0 0 0px 1000px white inset;
+	transition: background-color 5000s ease-in-out 0s;
+	color: white;
+}
+
+.ProseMirror:focus {
+	outline: none;
+}
+
+.bubble-menu {
+	display: flex;
+	background-color: #0d0d0d;
+	padding: 0.2rem;
+	border-radius: 0.5rem;
+}
+.bubble-menu button {
+	border: none;
+	background: none;
+	color: #fff;
+	font-size: 0.85rem;
+	font-weight: 500;
+	padding: 0 0.2rem;
+	opacity: 0.6;
+}
+.bubble-menu button:hover,
+.bubble-menu button.is-active {
+	opacity: 1;
+}
+.floating-menu {
+	display: flex;
+	background-color: #0d0d0d10;
+	padding: 0.2rem;
+	border-radius: 0.5rem;
+}
+.floating-menu button {
+	border: none;
+	background: none;
+	font-size: 0.85rem;
+	font-weight: 500;
+	padding: 0 0.2rem;
+	opacity: 0.6;
+}
+.floating-menu button:hover,
+.floating-menu button.is-active {
+	opacity: 1;
+}

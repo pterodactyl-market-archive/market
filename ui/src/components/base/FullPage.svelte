@@ -4,26 +4,15 @@
 
 <div class="page-wrapper full-page-panel">
     <div class="flex-fill" />
-
     <div class="wrapper wrapper-sm m-b-xl">
         {#if !nobranding}
             <div class="block txt-center m-b-lg">
-                <figure class="logo">
-                    <img
-                        src="{import.meta.env.BASE_URL}images/logo.svg"
-                        alt="PocketBase logo"
-                        width="40"
-                        height="40"
-                    />
-                    <span class="txt">Pocket<strong>Base</strong></span>
-                </figure>
+                <span class="txt"><strong>Pterodactyl Market</strong></span>
             </div>
             <div class="clearfix" />
         {/if}
-
         <slot />
     </div>
-
     <div class="flex-fill" />
 </div>
 
