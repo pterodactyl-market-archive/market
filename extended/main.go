@@ -30,8 +30,6 @@ import (
 	"github.com/pocketbase/pocketbase/tools/security"
 
 	"github.com/golang-jwt/jwt/v4"
-	// _ "github.com/pocketbase/pocketbase/statik"
-	// "github.com/rakyll/statik/fs"
 	"github.com/spf13/cobra"
 )
 
@@ -196,15 +194,6 @@ func main() {
 	
 		dataFs := echo.MustSubFS(e.Router.Filesystem, path)
 		e.Router.GET("/cdn/*", apis.StaticDirectoryHandler(dataFs, false), apis.ActivityLogger(app))
-
-		// statikFS, err := fs.New()
-		// 
-		// if err != nil {
-		// 	log.Fatal(err)
-		// }
-		// 
-		// h := http.FileServer(&indexWrapper{statikFS})
-		// e.Router.GET("/old/*", echo.WrapHandler(http.StripPrefix("/", h)), middleware.Gzip(), apis.ActivityLogger(app))
 		
 		e.Router.GET(
 			"/*",
