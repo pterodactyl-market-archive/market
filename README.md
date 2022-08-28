@@ -1,11 +1,8 @@
-## Market Backend
+## Market Application
+
 ### Build Instructions
 
 ```
-cd ui
-yarn
-yarn build
-cd ../
-go get
-goreleaser release --snapshot
+apt install make
+make build
 ```
