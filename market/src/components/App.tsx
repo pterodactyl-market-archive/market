@@ -39,7 +39,7 @@ const App = () => {
 						token: data.token,
 						username: profile.username,
 						email: user.email,
-						publicEmail: profile.publicEmail,
+						publicEmail: profile.public_email,
 						account: {
 							id: profile.id,
 							created: profile.created,
@@ -103,7 +103,7 @@ const App = () => {
 								</div>
 							}
 						/>
-						{!localStorage.getItem('pterodactyl_market_auth') && (
+						{(!localStorage.getItem('pterodactyl_market_auth') || !sessionStorage.getItem('pterodactyl_market_auth')) && (
 							<Fragment>
 								<Route
 									path='/login'
@@ -113,7 +113,14 @@ const App = () => {
 										</div>
 									}
 								/>
-								<Route path='/auth/oauth/:provider' element={<Page component={Oauth} title='Logging in...' />} />
+								<Route
+									path='/auth/oauth/:provider'
+									element={
+										<div tw='bg-zinc-50'>
+											<Page component={Oauth} title='Logging in...' />
+										</div>
+									}
+								/>
 							</Fragment>
 						)}
 					</Routes>

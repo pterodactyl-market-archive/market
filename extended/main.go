@@ -96,8 +96,8 @@ func main() {
 		  if err != nil {
 				return err
 		  }
-		  if group != originalRecord.GetStringDataValue("group") {
-				e.Record.SetDataValue("group", originalRecord.GetStringDataValue("group"));
+		  if group != "user" {
+				e.Record.SetDataValue("group", "user");
 		  }
 		  if sales != originalRecord.GetStringDataValue("sales") {
 				e.Record.SetDataValue("sales", originalRecord.GetStringDataValue("sales"));
@@ -158,6 +158,33 @@ func main() {
 			return nil
 	  })
 	  
+	 app.OnUserAfterOauth2Register().Add(func(e *core.UserOauth2RegisterEvent) error {
+			 collection, _ := app.Dao().FindCollectionByNameOrId("profiles")
+			 record, _ := app.Dao().FindFirstRecordByData(collection, "id", e.User.Profile.Id)
+			 
+			 record.SetDataValue("public_email", e.User.Email)
+			 err := app.Dao().SaveRecord(record)
+			 
+			 if err != nil {
+				 return err
+			 }
+			 
+			 return nil
+	  })
+	  
+	  app.OnUserAfterCreateRequest().Add(func(e *core.UserCreateEvent) error {
+				collection, _ := app.Dao().FindCollectionByNameOrId("profiles")
+				record, _ := app.Dao().FindFirstRecordByData(collection, "id", e.User.Profile.Id)
+				
+				record.SetDataValue("public_email", e.User.Email)
+				err := app.Dao().SaveRecord(record)
+				
+				if err != nil {
+					return err
+				}
+				
+				return nil
+		 })
 
 	app.RootCmd.AddCommand(&cobra.Command{
 		Use: "verify",

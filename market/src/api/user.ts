@@ -11,4 +11,15 @@ const getUserList = (id: string) => {
 	return ky.get(`${!isProduction ? 'https://beta.pterodactylmarket.com' : ''}/api/collections/profiles/records`).json();
 };
 
-export { getUserProfile, getUserList };
+const updateUserProfile = (token: string, id: string, data: any) => {
+	return ky
+		.patch(`${!isProduction ? 'https://beta.pterodactylmarket.com' : ''}/api/collections/profiles/records/${id}`, {
+			json: data,
+			headers: {
+				Authorization: `User ${token}`,
+			},
+		})
+		.json();
+};
+
+export { getUserProfile, getUserList, updateUserProfile };

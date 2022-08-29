@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import tw from 'twin.macro';
 import { isProduction } from '@/helpers';
 import { useStoreState } from 'easy-peasy';
-import { authenticateEmail } from '@/api/auth';
+import { authenticateEmail, loginProviders } from '@/api/auth';
 import { store, ApplicationStore } from '@/state';
 import { LoginBackground } from '@/assets/images';
 import { Link, useNavigate } from 'react-router-dom';
@@ -45,11 +45,11 @@ const Login = (props: { title: string }) => {
 
 				store.getActions().user.setUserData({
 					uuid: user.id,
-					group: profile.grouo,
+					group: profile.group,
 					token: data.token,
 					username: profile.username,
 					email: user.email,
-					publicEmail: profile.publicEmail,
+					publicEmail: profile.public_email,
 					account: {
 						id: profile.id,
 						created: profile.created,
@@ -129,8 +129,13 @@ const Login = (props: { title: string }) => {
 										</div>
 										<div>
 											<a
-												href='#'
-												tw='w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50'>
+												onClick={() =>
+													loginProviders('discord').then((method: any) => {
+														localStorage.setItem('pterodactyl_market_auth_verifier', method.codeVerifier);
+														window.location.replace(method.authUrl);
+													})
+												}
+												tw='w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 cursor-pointer'>
 												<span tw='sr-only'>Sign in with Discord</span>
 												<svg tw='w-5 h-5' aria-hidden='true' fill='currentColor' viewBox='0 0 71 55'>
 													<g clipPath='url(#clip0)'>

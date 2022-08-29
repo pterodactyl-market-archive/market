@@ -5,12 +5,16 @@ import { signOut } from '@/api/auth';
 import { Link } from 'react-router-dom';
 import { useStoreState } from 'easy-peasy';
 import { ApplicationStore } from '@/state';
-import { Offline } from 'react-detect-offline';
+{
+	/* import { Offline } from 'react-detect-offline'; */
+}
 import { debounce, classNames } from '@/helpers';
 import { NavbarBackground } from '@/assets/images';
 import { Spinner } from '@/components/elements/generic';
 import { ChevronDownIcon } from '@heroicons/react/solid';
-import { Fallback } from '@/components/elements/generic';
+{
+	/* import { Fallback } from '@/components/elements/generic'; */
+}
 import { Dialog, Tab, Menu, Popover, Transition } from '@headlessui/react';
 
 import {
@@ -160,7 +164,8 @@ const Navbar = () => {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 	const UserData = useStoreState((state: ApplicationStore) => state.user.data);
 
-	const Fallback = () => {
+	{
+		/* const Fallback = () => {
 		return (
 			<Offline>
 				<div css={tw`z-50 w-full bg-red-500 py-2 pointer-events-none`} style={{ transition: 'top 0.6s', top: visible ? '0' : '-40px' }}>
@@ -182,7 +187,8 @@ const Navbar = () => {
 				</div>
 			</Offline>
 		);
-	};
+	}; */
+	}
 
 	const handleScroll = debounce(() => {
 		const currentScrollPos = window.pageYOffset;
@@ -323,7 +329,7 @@ const Navbar = () => {
 				</Dialog>
 			</Transition.Root>
 			<header tw='relative z-20 fixed w-full' style={{ transition: 'top 0.6s', top: visible ? '0' : '-40px' }}>
-				<Fallback />
+				{/* <Fallback /> */}
 				<nav aria-label='Top'>
 					<div tw='bg-zinc-900'>
 						<div tw='max-w-7xl mx-auto h-10 px-4 flex items-center justify-between sm:px-6 lg:px-8'>
