@@ -6,9 +6,6 @@
 # goreleaser builds folder
 dist
 
-# built dist
-ui/dist
-
 #  app directories
 pb_data
 pb_public
