@@ -255,10 +255,11 @@ const Footer = (props: { title: string }) => {
 						</div>
 					</div>
 				</section>
-
-				<section aria-labelledby='products-heading' tw='bg-zinc-50 max-w-2xl mx-auto pt-8 pb-8 px-4 sm:px-6 lg:max-w-7xl lg:px-8'>
-					<Pagination paginatedEndpoint='resources' category={id} render={ResourceCard} />
-				</section>
+				<div tw='bg-zinc-50'>
+					<section aria-labelledby='products-heading' tw='max-w-2xl mx-auto pt-8 pb-8 px-4 sm:px-6 lg:max-w-7xl lg:px-8'>
+						<Pagination paginatedEndpoint='resources' category={id} render={ResourceCard} />
+					</section>
+				</div>
 			</main>
 		</PageContentBlock>
 	);

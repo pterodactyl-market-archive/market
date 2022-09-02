@@ -26,9 +26,7 @@ const App = () => {
 
 					const user = data.user;
 					const profile = user.profile;
-					const avatar = profile.avatar
-						? `${!isProduction && 'https://beta.pterodactylmarket.com'}/api/files/profiles/${profile.id}/${profile.avatar}`
-						: 'https://boring-avatars-api.vercel.app/api/avatar?size=512&variant=beam';
+					const avatar = profile.avatar ? profile.avatar : 'https://boring-avatars-api.vercel.app/api/avatar?size=512&variant=beam';
 					const banner = profile.banner
 						? `${!isProduction && 'https://beta.pterodactylmarket.com'}/api/files/profiles/${profile.id}/${profile.banner}`
 						: 'https://boring-avatars-api.vercel.app/api/avatar?size=512&variant=beam';

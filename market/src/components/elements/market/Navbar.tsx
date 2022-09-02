@@ -22,9 +22,11 @@ import {
 	QuestionMarkCircleIcon,
 	SearchIcon,
 	ShoppingBagIcon,
+	DocumentAddIcon,
 	XIcon,
 	ChartBarIcon,
 	DocumentIcon,
+	AnnotationIcon,
 	DocumentTextIcon,
 	DocumentReportIcon,
 	RefreshIcon,
@@ -38,6 +40,9 @@ import {
 	CogIcon,
 	CollectionIcon,
 	CubeTransparentIcon,
+	LoginIcon,
+	UserAddIcon,
+	SpeakerphoneIcon,
 } from '@heroicons/react/outline';
 
 const resources = [
@@ -54,45 +59,73 @@ const resources = [
 		icon: BookmarkAltIcon,
 	},
 	{
-		name: 'Events',
+		name: 'Reports',
 		description: 'See what meet-ups and other events we might be planning near you.',
 		href: '#',
-		icon: CalendarIcon,
+		icon: SpeakerphoneIcon,
 	},
 	{ name: 'Security', description: 'Understand how we take your privacy seriously.', href: '#', icon: ShieldCheckIcon },
+];
+
+const account = [
+	{
+		name: 'Sign in',
+		description: 'Welcome back, Sign into your account here.',
+		href: '/login',
+		icon: LoginIcon,
+	},
+	{
+		name: 'Create an account',
+		description: 'Don’t have an account? Sign up now for free.',
+		href: '/register',
+		icon: UserAddIcon,
+	},
 ];
 
 const currencies = ['USD', 'EUR', 'GBP'];
 const navigation = {
 	categories: [
 		{
-			name: 'Marketplace',
-			featured: [
-				{
-					name: 'Everything',
-					href: '/marketplace',
-					imageSrc: 'https://tailwindui.com/img/ecommerce-images/mega-menu-category-01.jpg',
-					imageAlt: 'Models sitting back to back, wearing Basic Tee in black and bone.',
-				},
-				{
-					name: 'Addons',
-					href: '/marketplace/addons',
-					imageSrc: 'https://tailwindui.com/img/ecommerce-images/mega-menu-category-02.jpg',
-					imageAlt: 'Close up of Basic Tee fall bundle with off-white, ochre, olive, and black tees.',
-				},
-				{
-					name: 'Accessories',
-					href: '#',
-					imageSrc: 'https://tailwindui.com/img/ecommerce-images/mega-menu-category-03.jpg',
-					imageAlt: 'Model wearing minimalist watch with black wristband and white watch face.',
-				},
-				{
-					name: 'Carry',
-					href: '#',
-					imageSrc: 'https://tailwindui.com/img/ecommerce-images/mega-menu-category-04.jpg',
-					imageAlt: 'Model opening tan leather long wallet with credit card pockets and cash pouch.',
-				},
-			],
+			name: 'Addons',
+			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+			href: '/marketplace/addons',
+			color: 'bg-teal-500',
+			icon: CollectionIcon,
+		},
+		{
+			name: 'Eggs',
+			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+			href: '/marketplace/eggs',
+			color: 'bg-blue-500',
+			icon: DocumentTextIcon,
+		},
+		{
+			name: 'Themes',
+			description: 'CLorem ipsum dolor sit amet, consectetur adipiscing elit.',
+			href: '/marketplace/themes',
+			color: 'bg-cyan-500',
+			icon: PencilIcon,
+		},
+		{
+			name: 'Scripts',
+			description: 'CLorem ipsum dolor sit amet, consectetur adipiscing elit.',
+			href: '/marketplace/scripts',
+			color: 'bg-indigo-500',
+			icon: CogIcon,
+		},
+		{
+			name: 'Services',
+			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+			href: '/marketplace/services',
+			color: 'bg-sky-500',
+			icon: CubeTransparentIcon,
+		},
+		{
+			name: 'Plugins',
+			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+			href: '/marketplace/plugins',
+			color: 'bg-purple-500',
+			icon: PuzzleIcon,
 		},
 	],
 	pages: [
@@ -101,45 +134,6 @@ const navigation = {
 		{ name: 'Docs', href: '/docs' },
 	],
 };
-
-const solutions = [
-	{
-		name: 'Addons',
-		description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-		href: '/marketplace/addons',
-		icon: CollectionIcon,
-	},
-	{
-		name: 'Eggs',
-		description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-		href: '/marketplace/eggs',
-		icon: DocumentTextIcon,
-	},
-	{
-		name: 'Themes',
-		description: 'CLorem ipsum dolor sit amet, consectetur adipiscing elit.',
-		href: '/marketplace/themes',
-		icon: PencilIcon,
-	},
-	{
-		name: 'Scripts',
-		description: 'CLorem ipsum dolor sit amet, consectetur adipiscing elit.',
-		href: '/marketplace/scripts',
-		icon: CogIcon,
-	},
-	{
-		name: 'Services',
-		description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-		href: '/marketplace/services',
-		icon: CubeTransparentIcon,
-	},
-	{
-		name: 'Plugins',
-		description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-		href: '/marketplace/plugins',
-		icon: PuzzleIcon,
-	},
-];
 
 const NavLink = (props: any) => {
 	const onPage = (path: string) => {
@@ -236,43 +230,22 @@ const Navbar = () => {
 
 							{/* Links */}
 							<Tab.Group as='div' tw='mt-2'>
-								<div tw='border-b border-zinc-200'>
-									<Tab.List tw='-mb-px flex px-4 space-x-8'>
-										{navigation.categories.map((category) => (
-											<Tab
-												key={category.name}
-												className={({ selected }) =>
-													classNames(
-														selected ? 'text-sky-600 border-sky-600' : 'text-zinc-900 border-transparent',
-														'flex-1 whitespace-nowrap py-4 px-1 border-b-2 text-base font-medium'
-													)
-												}>
-												{category.name}
-											</Tab>
-										))}
-									</Tab.List>
-								</div>
 								<Tab.Panels as={Fragment}>
-									{navigation.categories.map((category) => (
-										<Tab.Panel key={category.name} tw='px-4 py-6 space-y-12'>
-											<div tw='grid grid-cols-2 gap-x-4 gap-y-10'>
-												{category.featured.map((item) => (
-													<div key={item.name} className='group relative'>
-														<div tw='aspect-[1/1] rounded-md bg-zinc-100 overflow-hidden group-hover:opacity-75'>
-															<img src={item.imageSrc} alt={item.imageAlt} tw='object-center object-cover' />
+									<Tab.Panel tw='px-4 py-6 space-y-12'>
+										<div tw='grid grid-cols-2 gap-x-4 gap-y-5'>
+											{navigation.categories.map((item) => (
+												<Link to={item.href} key={item.name} className='group relative'>
+													<div tw='rounded-md bg-zinc-100 overflow-hidden group-hover:opacity-75 flex transition'>
+														<div
+															className={`flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-l-md text-white sm:h-12 sm:w-12 ${item.color}`}>
+															<item.icon className='h-6 w-6' aria-hidden='true' />
 														</div>
-														<a href={item.href} tw='mt-6 block text-sm font-medium text-zinc-900'>
-															<span tw='absolute z-10 inset-0' aria-hidden='true' />
-															{item.name}
-														</a>
-														<p aria-hidden='true' tw='mt-1 text-sm text-zinc-500'>
-															Shop now
-														</p>
+														<span tw='inline font-medium text-zinc-900 mt-2 ml-3'>{item.name}</span>
 													</div>
-												))}
-											</div>
-										</Tab.Panel>
-									))}
+												</Link>
+											))}
+										</div>
+									</Tab.Panel>
 								</Tab.Panels>
 							</Tab.Group>
 
@@ -371,29 +344,29 @@ const Navbar = () => {
 											leave='transition ease-in duration-75'
 											leaveFrom='transform opacity-100 scale-100'
 											leaveTo='transform opacity-0 scale-95'>
-											<Menu.Items className='origin-top-right absolute right-0 mt-0.5 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none'>
+											<Menu.Items className='origin-top-right absolute right-0 mt-0.5 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-zinc-100 focus:outline-none'>
 												<div className='px-4 py-3'>
 													<p className='text-sm'>Signed in as</p>
-													<p className='text-sm font-medium text-gray-900 truncate'>{UserData?.email}</p>
+													<p className='text-sm font-medium text-zinc-900 truncate'>{UserData?.email}</p>
 												</div>
 												<div className='py-1'>
 													<Menu.Item>
 														{({ active }) => (
-															<a href='#' className={classNames(active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm')}>
+															<a href='#' className={classNames(active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700', 'block px-4 py-2 text-sm')}>
 																Purchases
 															</a>
 														)}
 													</Menu.Item>
 													<Menu.Item>
 														{({ active }) => (
-															<a href='#' className={classNames(active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm')}>
+															<a href='#' className={classNames(active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700', 'block px-4 py-2 text-sm')}>
 																Friends
 															</a>
 														)}
 													</Menu.Item>
 													<Menu.Item>
 														{({ active }) => (
-															<a href='#' className={classNames(active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm')}>
+															<a href='#' className={classNames(active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700', 'block px-4 py-2 text-sm')}>
 																Settings
 															</a>
 														)}
@@ -403,7 +376,7 @@ const Navbar = () => {
 													<div className='py-1'>
 														<Menu.Item>
 															{({ active }) => (
-																<a href='#' className={classNames(active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm')}>
+																<a href='#' className={classNames(active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700', 'block px-4 py-2 text-sm')}>
 																	Become a seller
 																</a>
 															)}
@@ -413,14 +386,14 @@ const Navbar = () => {
 													<div className='py-1'>
 														<Menu.Item>
 															{({ active }) => (
-																<a href='#' className={classNames(active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm')}>
+																<a href='#' className={classNames(active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700', 'block px-4 py-2 text-sm')}>
 																	Resources
 																</a>
 															)}
 														</Menu.Item>
 														<Menu.Item>
 															{({ active }) => (
-																<a href='#' className={classNames(active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm')}>
+																<a href='#' className={classNames(active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700', 'block px-4 py-2 text-sm')}>
 																	Seller settings
 																</a>
 															)}
@@ -436,7 +409,7 @@ const Navbar = () => {
 																	window.location.reload();
 																}}
 																className={classNames(
-																	active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+																	active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700',
 																	'block w-full text-left px-4 py-2 text-sm'
 																)}>
 																Sign out
@@ -507,54 +480,65 @@ const Navbar = () => {
 																<Popover.Panel className='mt-20 absolute z-10 left-1/2 transform -translate-x-1/2 mt-3 px-2 w-screen max-w-md sm:px-0 lg:max-w-3xl'>
 																	<div tw='rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden'>
 																		<div tw='relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8 lg:grid-cols-2'>
-																			{solutions.map((item) => (
+																			{navigation.categories.map((item) => (
 																				<Popover.Button
 																					as={Link}
 																					key={item.name}
 																					to={item.href}
-																					className='-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50 transition ease-in-out duration-150'>
-																					<div className='flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-sky-500 text-white sm:h-12 sm:w-12'>
+																					className='-m-3 p-3 flex items-start rounded-lg hover:bg-zinc-100/60 transition ease-in-out duration-150'>
+																					<div
+																						className={`flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md text-white sm:h-12 sm:w-12 ${item.color}`}>
 																						<item.icon className='h-6 w-6' aria-hidden='true' />
 																					</div>
 																					<div className='ml-4'>
-																						<p className='text-base font-medium text-gray-900'>{item.name}</p>
-																						<p className='mt-1 text-sm text-gray-500'>{item.description}</p>
+																						<p className='text-base font-medium text-zinc-900'>{item.name}</p>
+																						<p className='mt-1 text-sm text-zinc-500'>{item.description}</p>
 																					</div>
 																				</Popover.Button>
 																			))}
 																		</div>
 																		{UserData?.group === 'seller' ? (
-																			<div className='p-5 bg-gray-50 sm:p-8 grid grid-cols-2'>
+																			<div className='p-5 bg-zinc-50 sm:p-8 grid grid-cols-3'>
 																				<a
 																					href='#'
-																					className='-my-5 -ml-5 p-3 flow-root rounded-md hover:bg-gray-100 transition ease-in-out duration-150'>
+																					className='-my-5 -ml-5 mr-3 p-3 flow-root rounded-md hover:bg-zinc-200/40 transition ease-in-out duration-150'>
 																					<span className='flex items-center'>
-																						<SupportIcon className='flex-shrink-0 h-6 w-6 text-gray-400' aria-hidden='true' />
-																						<span className='ml-3 text-base font-medium text-gray-900'>Create resource</span>
+																						<DocumentAddIcon className='flex-shrink-0 h-6 w-6 text-zinc-400' aria-hidden='true' />
+																						<span className='ml-3 text-base font-medium text-zinc-900'>Create resource</span>
 																					</span>
 																				</a>
 																				<a
 																					href='#'
-																					className='-my-5 -mr-5 p-3 flow-root rounded-md hover:bg-gray-100 transition ease-in-out duration-150'>
+																					className='-my-5 p-3 -ml-3 flow-root rounded-md hover:bg-zinc-200/40 transition ease-in-out duration-150'>
 																					<span className='flex items-center'>
-																						<SupportIcon className='flex-shrink-0 h-6 w-6 text-gray-400' aria-hidden='true' />
-																						<span className='ml-3 text-base font-medium text-gray-900'>Seller dashboard</span>
-																						<span className='ml-3 inline-flex items-center px-3 py-0.5 rounded-full text-xs font-medium leading-5 bg-sky-100 text-sky-800'>
+																						<ViewGridIcon className='flex-shrink-0 h-6 w-6 text-zinc-400' aria-hidden='true' />
+																						<span className='ml-3 text-base font-medium text-zinc-900'>Seller dashboard</span>
+																					</span>
+																				</a>
+																				<a
+																					href='#'
+																					className='-my-5 -mr-5 p-3 flow-root rounded-md hover:bg-zinc-200/40 transition ease-in-out duration-150'>
+																					<span className='flex items-center'>
+																						<AnnotationIcon className='flex-shrink-0 h-6 w-6 text-zinc-400' aria-hidden='true' />
+																						<span className='ml-3 text-base font-medium text-zinc-900'>Custom requests</span>
+																						<span className='ml-3 inline-flex items-center px-3 py-0.5 rounded-full text-xs font-medium leading-5 bg-sky-200 text-sky-900'>
 																							New
 																						</span>
 																					</span>
 																				</a>
 																			</div>
 																		) : (
-																			<div className='p-5 bg-gray-50 sm:p-8'>
-																				<a href='#' className='-m-3 p-3 flow-root rounded-md hover:bg-gray-100 transition ease-in-out duration-150'>
+																			<div className='p-5 bg-zinc-50 sm:p-8'>
+																				<a
+																					href='#'
+																					className='-m-3 p-3 flow-root rounded-md hover:bg-zinc-200/40 transition ease-in-out duration-150'>
 																					<span className='flex items-center'>
-																						<span className='text-base font-medium text-gray-900'>Custom requests</span>
-																						<span className='ml-3 inline-flex items-center px-3 py-0.5 rounded-full text-xs font-medium leading-5 bg-sky-100 text-sky-800'>
+																						<span className='text-base font-medium text-zinc-900'>Custom requests</span>
+																						<span className='ml-3 inline-flex items-center px-3 py-0.5 rounded-full text-xs font-medium leading-5 bg-sky-200 text-sky-900'>
 																							New
 																						</span>
 																					</span>
-																					<span className='mt-1 block text-sm text-gray-500'>
+																					<span className='mt-1 block text-sm text-zinc-500'>
 																						Empower your entire team with even more advanced tools.
 																					</span>
 																				</a>
@@ -613,7 +597,7 @@ const Navbar = () => {
 														<Popover.Button
 															className={classNames(
 																open ? 'text-sky-300' : 'text-white',
-																'hidden text-sm font-medium lg:block hover:text-sky-200 transition'
+																'hidden text-sm font-medium lg:block hover:text-sky-200 transition outline-none'
 															)}>
 															<span>Help</span>
 														</Popover.Button>
@@ -628,16 +612,16 @@ const Navbar = () => {
 															leaveTo='opacity-0 translate-y-1'>
 															<Popover.Panel className='absolute z-10 left-[-10rem] transform -translate-x-1/2 mt-3 px-2 w-screen max-w-md sm:px-0'>
 																<div className='rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden'>
-																	<div className='relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8'>
+																	<div className='relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-7'>
 																		{resources.map((item) => (
 																			<a
 																				key={item.name}
 																				href={item.href}
-																				className='-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50 transition ease-in-out duration-150'>
+																				className='-m-3 p-3 flex items-start rounded-lg hover:bg-zinc-100/60 transition ease-in-out duration-150'>
 																				<item.icon className='flex-shrink-0 h-6 w-6 text-sky-600' aria-hidden='true' />
 																				<div className='ml-4'>
-																					<p className='text-base font-medium text-gray-900'>{item.name}</p>
-																					<p className='mt-1 text-sm text-gray-500'>{item.description}</p>
+																					<p className='text-base font-medium text-zinc-900'>{item.name}</p>
+																					<p className='mt-1 text-sm text-zinc-500'>{item.description}</p>
 																				</div>
 																			</a>
 																		))}
@@ -648,6 +632,159 @@ const Navbar = () => {
 													</>
 												)}
 											</Popover>
+											{!visible && (
+												<div tw='flex items-center ml-6 hidden lg:block'>
+													{UserData?.token ? (
+														<Menu as='div' className='relative inline-block text-left z-50'>
+															<Menu.Button className='inline-flex justify-center text-sm font-medium text-white hover:text-zinc-100 -mr-2 mt-1.5'>
+																<img className='h-5 w-5 rounded-full mr-2' src={UserData?.profile.avatar} alt='' />
+																{UserData?.username}
+																<ChevronDownIcon className='ml-1 h-5 w-5 mt-[1px]' aria-hidden='true' />
+															</Menu.Button>
+															<Transition
+																as={Fragment}
+																enter='transition ease-out duration-100'
+																enterFrom='transform opacity-0 scale-95'
+																enterTo='transform opacity-100 scale-100'
+																leave='transition ease-in duration-75'
+																leaveFrom='transform opacity-100 scale-100'
+																leaveTo='transform opacity-0 scale-95'>
+																<Menu.Items className='origin-top-right absolute right-0 mt-0.5 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-zinc-100 focus:outline-none'>
+																	<div className='px-4 py-3'>
+																		<p className='text-sm'>Signed in as</p>
+																		<p className='text-sm font-medium text-zinc-900 truncate'>{UserData?.email}</p>
+																	</div>
+																	<div className='py-1'>
+																		<Menu.Item>
+																			{({ active }) => (
+																				<a
+																					href='#'
+																					className={classNames(active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700', 'block px-4 py-2 text-sm')}>
+																					Purchases
+																				</a>
+																			)}
+																		</Menu.Item>
+																		<Menu.Item>
+																			{({ active }) => (
+																				<a
+																					href='#'
+																					className={classNames(active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700', 'block px-4 py-2 text-sm')}>
+																					Friends
+																				</a>
+																			)}
+																		</Menu.Item>
+																		<Menu.Item>
+																			{({ active }) => (
+																				<a
+																					href='#'
+																					className={classNames(active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700', 'block px-4 py-2 text-sm')}>
+																					Settings
+																				</a>
+																			)}
+																		</Menu.Item>
+																	</div>
+																	{UserData?.group === 'user' ? (
+																		<div className='py-1'>
+																			<Menu.Item>
+																				{({ active }) => (
+																					<a
+																						href='#'
+																						className={classNames(active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700', 'block px-4 py-2 text-sm')}>
+																						Become a seller
+																					</a>
+																				)}
+																			</Menu.Item>
+																		</div>
+																	) : (
+																		<div className='py-1'>
+																			<Menu.Item>
+																				{({ active }) => (
+																					<a
+																						href='#'
+																						className={classNames(active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700', 'block px-4 py-2 text-sm')}>
+																						Resources
+																					</a>
+																				)}
+																			</Menu.Item>
+																			<Menu.Item>
+																				{({ active }) => (
+																					<a
+																						href='#'
+																						className={classNames(active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700', 'block px-4 py-2 text-sm')}>
+																						Seller settings
+																					</a>
+																				)}
+																			</Menu.Item>
+																		</div>
+																	)}
+																	<div className='py-1'>
+																		<Menu.Item>
+																			{({ active }) => (
+																				<button
+																					onClick={() => {
+																						signOut();
+																						window.location.reload();
+																					}}
+																					className={classNames(
+																						active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700',
+																						'block w-full text-left px-4 py-2 text-sm'
+																					)}>
+																					Sign out
+																				</button>
+																			)}
+																		</Menu.Item>
+																	</div>
+																</Menu.Items>
+															</Transition>
+														</Menu>
+													) : (
+														<Fragment>
+															<Popover className='relative'>
+																{({ open }) => (
+																	<>
+																		<Popover.Button
+																			className={classNames(
+																				open ? 'text-sky-300' : 'text-white',
+																				'hidden text-sm font-medium lg:block hover:text-sky-200 transition outline-none'
+																			)}>
+																			<span>Account</span>
+																		</Popover.Button>
+
+																		<Transition
+																			as={Fragment}
+																			enter='transition ease-out duration-200'
+																			enterFrom='opacity-0 translate-y-1'
+																			enterTo='opacity-100 translate-y-0'
+																			leave='transition ease-in duration-150'
+																			leaveFrom='opacity-100 translate-y-0'
+																			leaveTo='opacity-0 translate-y-1'>
+																			<Popover.Panel className='absolute z-10 left-[-10rem] transform -translate-x-1/2 mt-3 px-2 w-screen max-w-md sm:px-0'>
+																				<div className='rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden'>
+																					<div className='relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-7'>
+																						{account.map((item) => (
+																							<Link
+																								key={item.name}
+																								to={item.href}
+																								className='-m-3 p-3 flex items-start rounded-lg hover:bg-zinc-100/60 transition ease-in-out duration-150'>
+																								<item.icon className='flex-shrink-0 h-6 w-6 text-sky-600' aria-hidden='true' />
+																								<div className='ml-4'>
+																									<p className='text-base font-medium text-zinc-900'>{item.name}</p>
+																									<p className='mt-1 text-sm text-zinc-500'>{item.description}</p>
+																								</div>
+																							</Link>
+																						))}
+																					</div>
+																				</div>
+																			</Popover.Panel>
+																		</Transition>
+																	</>
+																)}
+															</Popover>
+														</Fragment>
+													)}
+												</div>
+											)}
+
 											{/* Cart */}
 											<div tw='ml-4 flow-root lg:ml-8'>
 												<a href='#' className='group -m-2 p-2 flex items-center'>

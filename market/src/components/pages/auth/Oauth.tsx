@@ -39,11 +39,9 @@ const Oauth = (props: { title: string }) => {
 					username: res.meta.name.split('#')[0],
 					discord: res.meta.name,
 					discord_id: res.meta.id,
-					group: 'user',
+					avatar: res.meta.avatarUrl,
 				}).then((profile: any) => {
-					const avatar = profile.avatar
-						? `${!isProduction && 'https://beta.pterodactylmarket.com'}/api/files/profiles/${profile.id}/${profile.avatar}`
-						: 'https://boring-avatars-api.vercel.app/api/avatar?size=512&variant=beam';
+					const avatar = profile.avatar ? profile.avatar : 'https://boring-avatars-api.vercel.app/api/avatar?size=512&variant=beam';
 					const banner = profile.banner
 						? `${!isProduction && 'https://beta.pterodactylmarket.com'}/api/files/profiles/${profile.id}/${profile.banner}`
 						: 'https://boring-avatars-api.vercel.app/api/avatar?size=512&variant=beam';
@@ -80,7 +78,7 @@ const Oauth = (props: { title: string }) => {
 			.catch((err) => {
 				console.log(err);
 				setShow(true);
-				setTimeout(() => navigate('/'), 2500);
+				setTimeout(() => navigate('/login'), 2500);
 			});
 	};
 

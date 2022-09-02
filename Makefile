@@ -12,7 +12,7 @@ build:
 	rm ../pocketbase
 	mv dist/pocketbase_linux_amd64_v1/pocketbase ../
 	chmod +x ../pocketbase \
-	&& echo -e "\n\033[33;32mBuild completed in $$(($$(date +%s)-d)) seconds\e[0m"
+	&& echo "\n\033[33;32mBuild completed in $$(($$(date +%s)-d)) seconds\e[0m"
 	
 binary:
 	d=$$(date +%s)\
@@ -21,7 +21,7 @@ binary:
 	rm ../pocketbase
 	mv dist/pocketbase_linux_amd64_v1/pocketbase ../
 	chmod +x ../pocketbase \
-	&& echo -e "\n\033[33;32mBuild completed in $$(($$(date +%s)-d)) seconds\e[0m"
+	&& echo "\n\033[33;32mBuild completed in $$(($$(date +%s)-d)) seconds\e[0m"
 
 copy:
 	rm ../pocketbase

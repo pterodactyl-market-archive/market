@@ -31,6 +31,8 @@ import (
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/spf13/cobra"
+	"github.com/gtuk/discordwebhook"
+
 )
 
 type indexWrapper struct {
@@ -96,9 +98,9 @@ func main() {
 		  if err != nil {
 				return err
 		  }
-		  if group != "user" {
-				e.Record.SetDataValue("group", "user");
-		  }
+		  if group != originalRecord.GetStringDataValue("group") {
+				e.Record.SetDataValue("group", originalRecord.GetStringDataValue("group"));
+			}
 		  if sales != originalRecord.GetStringDataValue("sales") {
 				e.Record.SetDataValue("sales", originalRecord.GetStringDataValue("sales"));
 		  }
@@ -144,6 +146,40 @@ func main() {
 		  return nil
 	 })
 	 
+	 app.OnRecordBeforeUpdateRequest().Add(func(e * core.RecordUpdateEvent) error {		 
+		  admin, _ := e.HttpContext.Get(apis.ContextAdminKey).(*models.Admin)
+		  
+			if admin != nil {
+				 return nil
+			}
+			if (e.Record.Collection().Name != "profiles") {
+				 return nil
+			}
+	  
+			 var username = "Pterodactyl Market - Updates"
+			 var title = fmt.Sprintf("'%s' has updated their account.", e.Record.GetStringDataValue("username"))
+			 var content = fmt.Sprintf("Discord: <@%s>\nUUID: %s", e.Record.GetStringDataValue("discord_id"), e.Record.GetStringDataValue("id"))
+			 var url = "https://discord.com/api/webhooks/1013884777989939250/AyDEsXCmNSybGKmRhg0jrlNrxpwTqeQ7oeuTZ6gnrZFmB8r0ogwhtliwHErBSc-cyV1M"
+			 
+			 embed := discordwebhook.Embed{
+				 Title: &title,
+				 Description: &content,
+			 }
+			 
+			 message := discordwebhook.Message{
+				  Username: &username,
+				  Embeds: &[]discordwebhook.Embed{embed},
+			 }
+			 
+			 err := discordwebhook.SendMessage(url, message)
+			
+			 if err != nil {
+				  return err
+			 }
+	  
+			return nil
+	  })
+	 
 	 app.OnUserBeforeUpdateRequest().Add(func(e *core.UserUpdateEvent) error {
 	 		collection, _ := app.Dao().FindCollectionByNameOrId("profiles")
 			record, _ := app.Dao().FindFirstRecordByData(collection, "id", e.User.Profile.Id)
@@ -163,6 +199,7 @@ func main() {
 			 record, _ := app.Dao().FindFirstRecordByData(collection, "id", e.User.Profile.Id)
 			 
 			 record.SetDataValue("public_email", e.User.Email)
+			 record.SetDataValue("group", "user")
 			 err := app.Dao().SaveRecord(record)
 			 
 			 if err != nil {
@@ -177,6 +214,7 @@ func main() {
 				record, _ := app.Dao().FindFirstRecordByData(collection, "id", e.User.Profile.Id)
 				
 				record.SetDataValue("public_email", e.User.Email)
+				record.SetDataValue("group", "user")
 				err := app.Dao().SaveRecord(record)
 				
 				if err != nil {

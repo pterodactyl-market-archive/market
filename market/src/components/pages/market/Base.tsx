@@ -58,7 +58,7 @@ const features = [
 	},
 	{
 		name: 'Curated content',
-		color: 'bg-sky-500',
+		color: 'bg-blue-500',
 		description: `Our team of developers code reviews all content to the best of our ability before it's available to the general public.`,
 		icon: ShieldCheckIcon,
 	},
@@ -346,9 +346,9 @@ const Base = (props: { title: string }) => {
 
 																<p className='mt-4 text-lg font-medium text-zinc-900'>{product.name}</p>
 																<p className='mb-1 text-sm font-medium text-sky-600'>@{product['@expand'].profile.username}</p>
-																<p className='text-sm text-gray-500'>{product.description}</p>
+																<p className='text-sm text-zinc-500'>{product.description}</p>
 																<div className='mt-1 flex-1 flex flex-col justify-end'>
-																	<p className='text-base font-medium text-gray-900'>${Number((product.price / 100).toFixed(2))}</p>
+																	<p className='text-base font-medium text-zinc-900'>${Number((product.price / 100).toFixed(2))}</p>
 																</div>
 															</div>
 														</Link>
@@ -358,7 +358,7 @@ const Base = (props: { title: string }) => {
 								</div>
 							</div>
 
-							<div className='mt-8 text-sm md:hidden'>
+							<div className='mt-1.5 text-sm md:hidden mb-16'>
 								<a href='#' className='font-medium text-sky-600 hover:text-sky-500'>
 									Browse featured products
 									<span aria-hidden='true'> &rarr;</span>
@@ -415,9 +415,9 @@ const Base = (props: { title: string }) => {
 
 															<p className='mt-4 text-lg font-medium text-zinc-900'>{product.name}</p>
 															<p className='mb-1 text-sm font-medium text-sky-600'>@{product['@expand'].profile.username}</p>
-															<p className='text-sm text-gray-500'>{product.description}</p>
+															<p className='text-sm text-zinc-500'>{product.description}</p>
 															<div className='mt-1 flex-1 flex flex-col justify-end'>
-																<p className='text-base font-medium text-gray-900'>${Number((product.price / 100).toFixed(2))}</p>
+																<p className='text-base font-medium text-zinc-900'>${Number((product.price / 100).toFixed(2))}</p>
 															</div>
 														</div>
 													</Link>
@@ -427,7 +427,7 @@ const Base = (props: { title: string }) => {
 								</div>
 							</div>
 
-							<div className='mt-8 text-sm md:hidden'>
+							<div className='mt-1.5 text-sm md:hidden mb-6'>
 								<a href='#' className='font-medium text-sky-600 hover:text-sky-500'>
 									Browse everything
 									<span aria-hidden='true'> &rarr;</span>
@@ -455,7 +455,7 @@ const Base = (props: { title: string }) => {
 											<a
 												key={category.name}
 												href={category.href}
-												tw='relative w-56 h-80 rounded-lg p-6 flex flex-col overflow-hidden hover:opacity-75 xl:w-auto'>
+												tw='relative w-56 h-80 rounded-lg p-6 flex flex-col overflow-hidden hover:opacity-75 xl:w-auto transition'>
 												<span aria-hidden='true' tw='absolute inset-0'>
 													<img src={category.imageSrc} alt='' tw='w-full h-full object-center object-cover' />
 												</span>
