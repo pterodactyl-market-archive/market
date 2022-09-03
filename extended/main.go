@@ -194,21 +194,21 @@ func main() {
 			return nil
 	  })
 	  
-	 app.OnUserAfterOauth2Register().Add(func(e *core.UserOauth2RegisterEvent) error {
-			 collection, _ := app.Dao().FindCollectionByNameOrId("profiles")
-			 record, _ := app.Dao().FindFirstRecordByData(collection, "id", e.User.Profile.Id)
-			 
-			 record.SetDataValue("public_email", e.User.Email)
-			 record.SetDataValue("group", "user")
-			 err := app.Dao().SaveRecord(record)
-			 
-			 if err != nil {
-				 return err
-			 }
-			 
-			 return nil
-	  })
-	  
+	 // app.OnUserAfterOauth2Register().Add(func(e *core.UserOauth2RegisterEvent) error {
+		// 	 collection, _ := app.Dao().FindCollectionByNameOrId("profiles")
+		// 	 record, _ := app.Dao().FindFirstRecordByData(collection, "id", e.User.Profile.Id)
+		// 	 
+		// 	 record.SetDataValue("public_email", e.User.Email)
+		// 	 record.SetDataValue("group", "user")
+		// 	 err := app.Dao().SaveRecord(record)
+		// 	 
+		// 	 if err != nil {
+		// 		 return err
+		// 	 }
+		// 	 
+		// 	 return nil
+	 //  })
+	 //  
 	  app.OnUserAfterCreateRequest().Add(func(e *core.UserCreateEvent) error {
 				collection, _ := app.Dao().FindCollectionByNameOrId("profiles")
 				record, _ := app.Dao().FindFirstRecordByData(collection, "id", e.User.Profile.Id)

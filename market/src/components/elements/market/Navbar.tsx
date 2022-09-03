@@ -347,28 +347,36 @@ const Navbar = () => {
 											<Menu.Items className='origin-top-right absolute right-0 mt-0.5 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-zinc-100 focus:outline-none'>
 												<div className='px-4 py-3'>
 													<p className='text-sm'>Signed in as</p>
-													<p className='text-sm font-medium text-zinc-900 truncate'>{UserData?.email}</p>
+													<Link to={`/profile/${UserData?.username}/`} className='text-sm font-medium text-zinc-900 truncate'>
+														{UserData?.email}
+													</Link>
 												</div>
 												<div className='py-1'>
 													<Menu.Item>
 														{({ active }) => (
-															<a href='#' className={classNames(active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700', 'block px-4 py-2 text-sm')}>
+															<Link
+																to='/settings/account/purchases'
+																className={classNames(active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700', 'block px-4 py-2 text-sm')}>
 																Purchases
-															</a>
+															</Link>
 														)}
 													</Menu.Item>
 													<Menu.Item>
 														{({ active }) => (
-															<a href='#' className={classNames(active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700', 'block px-4 py-2 text-sm')}>
+															<Link
+																to={`/profile/${UserData?.username}/friends`}
+																className={classNames(active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700', 'block px-4 py-2 text-sm')}>
 																Friends
-															</a>
+															</Link>
 														)}
 													</Menu.Item>
 													<Menu.Item>
 														{({ active }) => (
-															<a href='#' className={classNames(active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700', 'block px-4 py-2 text-sm')}>
+															<Link
+																to='/settings/account'
+																className={classNames(active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700', 'block px-4 py-2 text-sm')}>
 																Settings
-															</a>
+															</Link>
 														)}
 													</Menu.Item>
 												</div>
@@ -386,16 +394,20 @@ const Navbar = () => {
 													<div className='py-1'>
 														<Menu.Item>
 															{({ active }) => (
-																<a href='#' className={classNames(active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700', 'block px-4 py-2 text-sm')}>
+																<Link
+																	to='/seller/resources'
+																	className={classNames(active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700', 'block px-4 py-2 text-sm')}>
 																	Resources
-																</a>
+																</Link>
 															)}
 														</Menu.Item>
 														<Menu.Item>
 															{({ active }) => (
-																<a href='#' className={classNames(active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700', 'block px-4 py-2 text-sm')}>
+																<Link
+																	to='/seller/dashboard'
+																	className={classNames(active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700', 'block px-4 py-2 text-sm')}>
 																	Seller settings
-																</a>
+																</Link>
 															)}
 														</Menu.Item>
 													</div>
@@ -406,7 +418,8 @@ const Navbar = () => {
 															<button
 																onClick={() => {
 																	signOut();
-																	window.location.reload();
+																	//@ts-ignore
+																	window.location.href = '/';
 																}}
 																className={classNames(
 																	active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700',
@@ -499,24 +512,24 @@ const Navbar = () => {
 																		</div>
 																		{UserData?.group === 'seller' ? (
 																			<div className='p-5 bg-zinc-50 sm:p-8 grid grid-cols-3'>
-																				<a
-																					href='#'
+																				<Link
+																					to='/seller/resources/create'
 																					className='-my-5 -ml-5 mr-3 p-3 flow-root rounded-md hover:bg-zinc-200/40 transition ease-in-out duration-150'>
 																					<span className='flex items-center'>
 																						<DocumentAddIcon className='flex-shrink-0 h-6 w-6 text-zinc-400' aria-hidden='true' />
 																						<span className='ml-3 text-base font-medium text-zinc-900'>Create resource</span>
 																					</span>
-																				</a>
-																				<a
-																					href='#'
+																				</Link>
+																				<Link
+																					to='/seller/dashboard'
 																					className='-my-5 p-3 -ml-3 flow-root rounded-md hover:bg-zinc-200/40 transition ease-in-out duration-150'>
 																					<span className='flex items-center'>
 																						<ViewGridIcon className='flex-shrink-0 h-6 w-6 text-zinc-400' aria-hidden='true' />
 																						<span className='ml-3 text-base font-medium text-zinc-900'>Seller dashboard</span>
 																					</span>
-																				</a>
-																				<a
-																					href='#'
+																				</Link>
+																				<Link
+																					to='/requests'
 																					className='-my-5 -mr-5 p-3 flow-root rounded-md hover:bg-zinc-200/40 transition ease-in-out duration-150'>
 																					<span className='flex items-center'>
 																						<AnnotationIcon className='flex-shrink-0 h-6 w-6 text-zinc-400' aria-hidden='true' />
@@ -525,7 +538,7 @@ const Navbar = () => {
 																							New
 																						</span>
 																					</span>
-																				</a>
+																				</Link>
 																			</div>
 																		) : (
 																			<div className='p-5 bg-zinc-50 sm:p-8'>
@@ -652,34 +665,36 @@ const Navbar = () => {
 																<Menu.Items className='origin-top-right absolute right-0 mt-0.5 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-zinc-100 focus:outline-none'>
 																	<div className='px-4 py-3'>
 																		<p className='text-sm'>Signed in as</p>
-																		<p className='text-sm font-medium text-zinc-900 truncate'>{UserData?.email}</p>
+																		<Link to={`/profile/${UserData?.username}/`} className='text-sm font-medium text-zinc-900 truncate'>
+																			{UserData?.email}
+																		</Link>
 																	</div>
 																	<div className='py-1'>
 																		<Menu.Item>
 																			{({ active }) => (
-																				<a
-																					href='#'
+																				<Link
+																					to='/settings/account/purchases'
 																					className={classNames(active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700', 'block px-4 py-2 text-sm')}>
 																					Purchases
-																				</a>
+																				</Link>
 																			)}
 																		</Menu.Item>
 																		<Menu.Item>
 																			{({ active }) => (
-																				<a
-																					href='#'
+																				<Link
+																					to={`/profile/${UserData?.username}/friends`}
 																					className={classNames(active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700', 'block px-4 py-2 text-sm')}>
 																					Friends
-																				</a>
+																				</Link>
 																			)}
 																		</Menu.Item>
 																		<Menu.Item>
 																			{({ active }) => (
-																				<a
-																					href='#'
+																				<Link
+																					to='/settings/account'
 																					className={classNames(active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700', 'block px-4 py-2 text-sm')}>
 																					Settings
-																				</a>
+																				</Link>
 																			)}
 																		</Menu.Item>
 																	</div>
@@ -699,20 +714,20 @@ const Navbar = () => {
 																		<div className='py-1'>
 																			<Menu.Item>
 																				{({ active }) => (
-																					<a
-																						href='#'
+																					<Link
+																						to='/seller/resources'
 																						className={classNames(active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700', 'block px-4 py-2 text-sm')}>
 																						Resources
-																					</a>
+																					</Link>
 																				)}
 																			</Menu.Item>
 																			<Menu.Item>
 																				{({ active }) => (
-																					<a
-																						href='#'
+																					<Link
+																						to='/seller/dashboard'
 																						className={classNames(active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700', 'block px-4 py-2 text-sm')}>
 																						Seller settings
-																					</a>
+																					</Link>
 																				)}
 																			</Menu.Item>
 																		</div>
@@ -723,7 +738,8 @@ const Navbar = () => {
 																				<button
 																					onClick={() => {
 																						signOut();
-																						window.location.reload();
+																						//@ts-ignore
+																						window.location.href = '/';
 																					}}
 																					className={classNames(
 																						active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700',

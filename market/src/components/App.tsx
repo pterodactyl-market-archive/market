@@ -3,7 +3,7 @@ import React, { useEffect, useState, Fragment } from 'react';
 import tw from 'twin.macro';
 import Page from '@/components/Page';
 import { refreshUser } from '@/api/auth';
-import { MarketRouter } from '@/routers';
+import { MarketRouter, SettingsRouter, SellerRouter } from '@/routers';
 import { useStoreState } from 'easy-peasy';
 import { Login, Oauth } from '@/components/pages/auth';
 import { Base } from '@/components/pages/market';
@@ -12,16 +12,20 @@ import { isProduction, debounce } from '@/helpers';
 import { Navbar, Footer } from '@/components/elements/market';
 import { ScrollToTop, Spinner } from '@/components/elements/generic';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import LoadingBar from 'react-top-loading-bar';
 
 const App = () => {
 	const [loaded, setLoaded] = useState(false);
 	const [visible, setVisible] = useState(false);
+	const [progress, setProgress] = useState(0);
 	const UserData = useStoreState((state: ApplicationStore) => state.user.data);
 
-	useEffect(() => {
+	const refresh = () => {
 		if (localStorage.getItem('pterodactyl_market_auth')) {
+			setProgress(20);
 			refreshUser(localStorage.getItem('pterodactyl_market_auth'))
 				.then((data: any) => {
+					setProgress(50);
 					localStorage.setItem('pterodactyl_market_auth', data.token);
 
 					const user = data.user;
@@ -63,11 +67,26 @@ const App = () => {
 					store.getActions().user.reset();
 					console.log(err);
 				})
-				.then(() => setLoaded(true));
+				.then(() => {
+					setLoaded(true);
+					setProgress(100);
+				});
 		} else {
 			localStorage.removeItem('pterodactyl_market_auth');
 			setLoaded(true);
 		}
+	};
+
+	useEffect(() => {
+		refresh();
+	}, []);
+
+	useEffect(() => {
+		const interval = setInterval(function () {
+			refresh();
+		}, 120000);
+
+		return () => clearInterval(interval);
 	}, []);
 
 	if (!loaded) {
@@ -79,6 +98,7 @@ const App = () => {
 	} else {
 		return (
 			<BrowserRouter>
+				<LoadingBar color='#39A5E9' progress={progress} onLoaderFinished={() => setProgress(0)} />
 				<ScrollToTop>
 					<Routes>
 						<Route
@@ -101,6 +121,28 @@ const App = () => {
 								</div>
 							}
 						/>
+						{(localStorage.getItem('pterodactyl_market_auth') || sessionStorage.getItem('pterodactyl_market_auth')) && (
+							<Fragment>
+								<Route
+									path='/settings/*'
+									element={
+										<div tw='bg-zinc-100 text-zinc-900 dark:(bg-zinc-800 text-zinc-50) overscroll-none'>
+											<Navbar />
+											<SettingsRouter />
+											<Footer />
+										</div>
+									}
+								/>
+								<Route
+									path='/seller/*'
+									element={
+										<div tw='bg-zinc-100 text-zinc-900 dark:(bg-zinc-800 text-zinc-50) overscroll-none'>
+											<SellerRouter />
+										</div>
+									}
+								/>
+							</Fragment>
+						)}
 						{(!localStorage.getItem('pterodactyl_market_auth') || !sessionStorage.getItem('pterodactyl_market_auth')) && (
 							<Fragment>
 								<Route

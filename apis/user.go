@@ -36,7 +36,7 @@ func BindUserApi(app core.App, rg *echo.Group) {
 	subGroup.GET("", api.list, RequireAdminAuth())
 	subGroup.POST("", api.create)
 	subGroup.GET("/:id", api.view, RequireAdminOrOwnerAuth("id"))
-	subGroup.PATCH("/:id", api.update, RequireAdminAuth())
+	subGroup.PATCH("/:id", api.update, RequireAdminOrOwnerAuth("id"))
 	subGroup.DELETE("/:id", api.delete, RequireAdminOrOwnerAuth("id"))
 	subGroup.GET("/:id/external-auths", api.listExternalAuths, RequireAdminOrOwnerAuth("id"))
 	subGroup.DELETE("/:id/external-auths/:provider", api.unlinkExternalAuth, RequireAdminOrOwnerAuth("id"))
