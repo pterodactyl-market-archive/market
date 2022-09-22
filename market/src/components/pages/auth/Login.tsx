@@ -87,10 +87,7 @@ const Login = (props: { title: string }) => {
 				<div tw='flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24'>
 					<div tw='mx-auto w-full max-w-sm lg:w-96'>
 						<div>
-							<Link to='/'>
-								<div className='flex items-center flex-shrink-0 text-sky-700 font-bold text-xl'>Pterodactyl Market</div>
-							</Link>
-							<h2 tw='mt-6 text-3xl font-extrabold text-gray-900'>Sign in to your account</h2>
+							<h2 tw='text-3xl font-extrabold text-gray-900'>Sign in to your account</h2>
 							<p tw='mt-2 text-sm text-gray-600'>
 								Don’t have an account?
 								<Link to='/register' tw='font-medium text-sky-600 hover:text-sky-500'>
@@ -212,8 +209,14 @@ const Login = (props: { title: string }) => {
 					</div>
 				</div>
 				<div tw='hidden lg:block relative w-0 flex-1'>
-					<img tw='absolute inset-0 h-full w-full object-cover' src={LoginBackground} alt='' />
+					<img tw='absolute inset-0 h-full w-full object-cover hue-rotate-[-10deg] brightness-[0.92]' src={LoginBackground} alt='' />
 				</div>
+				<Link to='/' tw='absolute top-0 right-4 -mt-2'>
+					<div className='text-sky-200 font-black text-[4rem] text-right'>
+						<p>Pterodactyl</p>
+						<p tw='-mt-10 text-sky-300'>Market</p>
+					</div>
+				</Link>
 			</div>
 			<Notification
 				show={show}

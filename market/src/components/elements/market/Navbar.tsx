@@ -5,16 +5,10 @@ import { signOut } from '@/api/auth';
 import { Link } from 'react-router-dom';
 import { useStoreState } from 'easy-peasy';
 import { ApplicationStore } from '@/state';
-{
-	/* import { Offline } from 'react-detect-offline'; */
-}
 import { debounce, classNames } from '@/helpers';
 import { NavbarBackground } from '@/assets/images';
 import { Spinner } from '@/components/elements/generic';
 import { ChevronDownIcon } from '@heroicons/react/solid';
-{
-	/* import { Fallback } from '@/components/elements/generic'; */
-}
 import { Dialog, Tab, Menu, Popover, Transition } from '@headlessui/react';
 
 import {
@@ -135,54 +129,10 @@ const navigation = {
 	],
 };
 
-const NavLink = (props: any) => {
-	const onPage = (path: string) => {
-		return window.location.pathname.endsWith(props.href);
-	};
-	return (
-		<Link
-			to={props.href}
-			css={[
-				tw`rounded-[5px] px-2.5 py-[5px] mx-2 text-base font-medium text-center`,
-				onPage(props.href)
-					? tw`bg-opacity-50 bg-zinc-200 dark:bg-opacity-10`
-					: tw`bg-opacity-0 text-zinc-600 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-300`,
-			]}>
-			{props.name}
-		</Link>
-	);
-};
-
 const Navbar = () => {
 	const [visible, setVisible] = useState(true);
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 	const UserData = useStoreState((state: ApplicationStore) => state.user.data);
-
-	{
-		/* const Fallback = () => {
-		return (
-			<Offline>
-				<div css={tw`z-50 w-full bg-red-500 py-2 pointer-events-none`} style={{ transition: 'top 0.6s', top: visible ? '0' : '-40px' }}>
-					<div css={tw`flex items-center justify-center`}>
-						<Spinner size={'small'} />
-						<p css={tw`ml-2 text-sm text-red-50 font-semibold`}>We&apos;re having some trouble connecting to the internet, please wait...</p>
-					</div>
-				</div>
-				<div
-					css={[
-						tw`right-0 bg-red-500 z-50 sm:shadow-lg sm:rounded-lg pointer-events-none ring-1 ring-black ring-opacity-5 overflow-hidden sm:mb-4 sm:mr-4 p-3`,
-						window.location.pathname == '/login' && tw`hidden`,
-					]}
-					style={{ position: 'fixed', bottom: !visible ? '0' : '-10rem' }}>
-					<div css={tw`flex items-center`}>
-						<Spinner size={'small'} />
-						<p css={tw`ml-3 text-sm text-red-50 font-semibold`}>We&apos;re having some trouble connecting to the internet, please wait...</p>
-					</div>
-				</div>
-			</Offline>
-		);
-	}; */
-	}
 
 	const handleScroll = debounce(() => {
 		const currentScrollPos = window.pageYOffset;
@@ -304,18 +254,18 @@ const Navbar = () => {
 			<header tw='relative z-20 fixed w-full' style={{ transition: 'top 0.6s', top: visible ? '0' : '-40px' }}>
 				{/* <Fallback /> */}
 				<nav aria-label='Top'>
-					<div tw='bg-zinc-900'>
+					<div tw='bg-sky-900'>
 						<div tw='max-w-7xl mx-auto h-10 px-4 flex items-center justify-between sm:px-6 lg:px-8'>
 							<form>
 								<div>
 									<label htmlFor='desktop-currency' tw='sr-only'>
 										Currency
 									</label>
-									<div className='group' tw='-ml-2  relative bg-zinc-900 border-transparent rounded-md focus-within:ring-2 focus-within:ring-white'>
+									<div className='group' tw='-ml-2 relative bg-sky-900 border-transparent rounded-md focus-within:ring-2 focus-within:ring-white'>
 										<select
 											id='desktop-currency'
 											name='currency'
-											tw='bg-none bg-zinc-900 border-transparent rounded-md py-0.5 pl-2 pr-5 flex items-center text-sm font-medium text-white group-hover:text-zinc-100 focus:outline-none focus:ring-0 focus:border-transparent'>
+											tw='bg-none bg-sky-900 border-transparent rounded-md py-0.5 pl-2 pr-5 flex items-center text-sm font-medium text-white group-hover:text-zinc-100 focus:outline-none focus:ring-0 focus:border-transparent'>
 											{currencies.map((currency) => (
 												<option key={currency}>{currency}</option>
 											))}
@@ -448,8 +398,8 @@ const Navbar = () => {
 					</div>
 
 					<div
-						tw='backdrop-blur-md backdrop-filter bg-opacity-20 bg-black transition-all'
-						css={(!visible || window.location.pathname !== '/') && tw`bg-opacity-70 shadow-md`}>
+						tw='backdrop-blur-md backdrop-filter bg-opacity-70 bg-sky-700 transition-all'
+						css={(!visible || window.location.pathname !== '/') && tw`bg-opacity-[0.85] shadow-md`}>
 						<div tw='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
 							<div>
 								<div tw='h-16 flex items-center justify-between'>
@@ -565,12 +515,12 @@ const Navbar = () => {
 												</Popover>
 
 												{navigation.pages.map((page) => (
-													<a
+													<Link
 														key={page.name}
-														href={page.href}
+														to={page.href}
 														tw='flex items-center text-sm font-medium text-white drop-shadow-sm hover:text-sky-200 transition'>
 														{page.name}
-													</a>
+													</Link>
 												))}
 											</div>
 										</Popover.Group>
@@ -627,16 +577,16 @@ const Navbar = () => {
 																<div className='rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden'>
 																	<div className='relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-7'>
 																		{resources.map((item) => (
-																			<a
+																			<Link
 																				key={item.name}
-																				href={item.href}
+																				to={item.href}
 																				className='-m-3 p-3 flex items-start rounded-lg hover:bg-zinc-100/60 transition ease-in-out duration-150'>
 																				<item.icon className='flex-shrink-0 h-6 w-6 text-sky-600' aria-hidden='true' />
 																				<div className='ml-4'>
 																					<p className='text-base font-medium text-zinc-900'>{item.name}</p>
 																					<p className='mt-1 text-sm text-zinc-500'>{item.description}</p>
 																				</div>
-																			</a>
+																			</Link>
 																		))}
 																	</div>
 																</div>

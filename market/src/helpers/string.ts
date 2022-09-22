@@ -19,4 +19,6 @@ const classNames = (...classes: Array<any>) => {
 	return classes.filter(Boolean).join(' ');
 };
 
-export { getRandomString, toHex, classNames };
+const formatPrice = (num: string) => Number(num).toFixed(Math.max(num.split('.')[1]?.length, 2) || 2);
+
+export { getRandomString, toHex, classNames, formatPrice };

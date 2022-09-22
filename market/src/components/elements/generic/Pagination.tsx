@@ -21,7 +21,7 @@ const Pagination = (props: PaginationProps) => {
 		setLoaded(false);
 		fetchCollection<PaginatedResult>(
 			props.paginatedEndpoint,
-			`?perPage=${limit}${props.category ? `&filter=(category='${props.category}')` : ''}&page=${page}&sort=-updated&expand=profile${
+			`?perPage=${limit}${props.category ? `&filter=(category='${props.category}')` : ''}&page=${page}&sort=-updated&expand=packages,profile${
 				props.customQuery ? props.customQuery : ''
 			}`
 		).then((data: any) => {
@@ -40,9 +40,11 @@ const Pagination = (props: PaginationProps) => {
 	return (
 		<Fragment>
 			<div tw='grid sm:grid-cols-2 lg:grid-cols-4 gap-6 gap-y-8'>
-				{resources?.map((data: ResourceResult, index: number) => (
-					<props.render key={`${data.id}, ${index}`} data={data as never} />
-				))}
+				{resources
+					?.sort((item) => (item.featured ? -1 : 1))
+					.map((data: ResourceResult, index: number) => (
+						<props.render key={`${data.id}, ${index}`} data={data as never} />
+					))}
 			</div>
 			<div tw='mt-6 pt-3 flex items-center justify-between border-t border-gray-200 dark:border-zinc-700'>
 				<div tw='flex-1 flex justify-between sm:hidden'>

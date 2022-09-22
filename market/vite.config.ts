@@ -67,7 +67,7 @@ export default defineConfig({
 		watch: true,
 		hmr: true,
 		port: 5173,
-		host: '0.0.0.0',
+		host: '127.0.0.1',
 	},
 	resolve: {
 		alias: [{ find: '@', replacement: resolve(__dirname, './src') }],

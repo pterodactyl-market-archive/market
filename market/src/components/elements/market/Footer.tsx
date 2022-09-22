@@ -1,16 +1,16 @@
 import React, { useEffect, useState, Fragment } from 'react';
 
 import tw from 'twin.macro';
-import { Hero, ResourceCard } from '@/components/elements/market';
-import { PageContentBlock, Container, Pagination } from '@/components/elements/generic';
-import { Dialog, Popover, Tab, Transition } from '@headlessui/react';
-import { MenuIcon, QuestionMarkCircleIcon, SearchIcon, ShoppingBagIcon, XIcon } from '@heroicons/react/outline';
 import { classNames } from '@/helpers';
 import { Link } from 'react-router-dom';
-import { LoginBackground } from '@/assets/images';
-import { version } from '../../../../package.json';
 import { useStoreState } from 'easy-peasy';
 import { ApplicationStore } from '@/state';
+import { version } from '../../../../package.json';
+import { SellerPromo, FooterIcon } from '@/assets/images';
+import { Hero, ResourceCard } from '@/components/elements/market';
+import { Dialog, Popover, Tab, Transition } from '@headlessui/react';
+import { PageContentBlock, Container, Pagination } from '@/components/elements/generic';
+import { MenuIcon, QuestionMarkCircleIcon, SearchIcon, ShoppingBagIcon, XIcon } from '@heroicons/react/outline';
 
 const navigation = {
 	solutions: [
@@ -125,7 +125,7 @@ const Footer = () => {
 						<div className='-mt-6 aspect-w-5 aspect-h-3 md:aspect-w-2 md:aspect-h-1'>
 							<img
 								className='transform translate-x-6 translate-y-6 rounded-md object-cover object-left-top sm:translate-x-16 lg:translate-y-20'
-								src='https://tailwindui.com/img/component-images/full-width-with-sidebar.jpg'
+								src={SellerPromo}
 								alt='App screenshot'
 							/>
 						</div>
@@ -133,7 +133,7 @@ const Footer = () => {
 				)}
 				<div className='xl:grid xl:grid-cols-3 xl:gap-8'>
 					<div className='space-y-6 xl:col-span-1'>
-						<img className='h-10 w-10 rounded-full' src='https://pbs.twimg.com/profile_images/1380700318464413703/eLxCqnnM_400x400.png' />
+						<img className='h-10 w-10 rounded-full' src={FooterIcon} />
 						<p className='text-zinc-500 text-base'>Pterodactyl Market</p>
 						<div className='flex space-x-6'>
 							{navigation.social.map((item) => (

@@ -17,36 +17,29 @@ import {
 } from '@heroicons/react/outline';
 import { classNames, isProduction } from '@/helpers';
 import { Link } from 'react-router-dom';
-import { LoginBackground } from '@/assets/images';
+import { HeroBackground } from '@/assets/images';
 import { PaginationProps, PaginatedResult, ResourceResult } from '#types/market';
 import { fetchCollection } from '@/api/fetch';
 
 const testimonials = [
 	{
 		id: 1,
-		quote: 'My order arrived super quickly. The product is even better than I hoped it would be. Very happy customer over here!',
-		attribution: 'Sarah Peters, New Orleans',
+		quote:
+			'This site is perfect for selling my addons. The notice system is well done, no false notices are present. As a customer and seller I highly recommend Pterodactyl Market',
+		attribution: 'Bagou450',
 	},
 	{
 		id: 2,
-		quote: 'I had to return a purchase that didn’t fit. The whole process was so simple that I ended up ordering two new items!',
-		attribution: 'Kelly McPherson, Chicago',
+		quote:
+			'This site is perfect for selling my addons. The notice system is well done, no false notices are present. As a customer and seller I highly recommend Pterodactyl Market',
+		attribution: 'Bagou450',
 	},
 	{
 		id: 3,
 		quote:
-			'Now that I’m on holiday for the summer, I’ll probably order a few more shirts. It’s just so convenient, and I know the quality will always be there.',
-		attribution: 'Chris Paul, Phoenix',
+			'This site is perfect for selling my addons. The notice system is well done, no false notices are present. As a customer and seller I highly recommend Pterodactyl Market',
+		attribution: 'Bagou450',
 	},
-];
-
-const faqs = [
-	{
-		id: 1,
-		question: "What's the best thing about Switzerland?",
-		answer: "I don't know, but the flag is a big plus. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.",
-	},
-	// More questions...
 ];
 
 const features = [
@@ -80,12 +73,12 @@ const categories = [
 	{
 		name: 'Themes',
 		href: '#',
-		imageSrc: 'https://source.boringavatars.com/sunset/512/?square',
+		imageSrc: 'https://source.boringavatars.com/marble/512/?square',
 	},
 	{
 		name: 'Addons',
 		href: '#',
-		imageSrc: 'https://source.boringavatars.com/sunset/512/?square',
+		imageSrc: 'https://source.boringavatars.com/pixel/512/?square',
 	},
 	{
 		name: 'Eggs',
@@ -93,57 +86,9 @@ const categories = [
 		imageSrc: 'https://source.boringavatars.com/sunset/512/?square',
 	},
 	{
-		name: 'Plugins',
-		href: '#',
-		imageSrc: 'https://source.boringavatars.com/sunset/512/?square',
-	},
-	{
 		name: 'Services',
 		href: '#',
-		imageSrc: 'https://source.boringavatars.com/sunset/512/?square',
-	},
-];
-
-const trendingProducts = [
-	{
-		id: 1,
-		name: 'Adddon Name',
-		description: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus repellat laudantium.',
-		price: 9.99,
-		href: '#',
-		imageSrc: 'https://source.boringavatars.com/bauhaus/512?square',
-		banner: 'https://source.boringavatars.com/marble/512?square',
-		author: { username: 'theMackabu' },
-	},
-	{
-		id: 2,
-		name: 'Adddon Name',
-		description: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus repellat laudantium.',
-		price: 9.99,
-		href: '#',
-		imageSrc: 'https://source.boringavatars.com/bauhaus/512?square',
-		banner: 'https://source.boringavatars.com/marble/512?square',
-		author: { username: 'theMackabu' },
-	},
-	{
-		id: 3,
-		name: 'Adddon Name',
-		description: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus repellat laudantium.',
-		price: 9.99,
-		href: '#',
-		imageSrc: 'https://source.boringavatars.com/bauhaus/512?square',
-		banner: 'https://source.boringavatars.com/marble/512?square',
-		author: { username: 'theMackabu' },
-	},
-	{
-		id: 4,
-		name: 'Adddon Name',
-		description: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus repellat laudantium.',
-		price: 9.99,
-		href: '#',
-		imageSrc: 'https://source.boringavatars.com/bauhaus/512?square',
-		banner: 'https://source.boringavatars.com/marble/512?square',
-		author: { username: 'theMackabu' },
+		imageSrc: 'https://source.boringavatars.com/bauhaus/512/?square',
 	},
 ];
 
@@ -176,10 +121,9 @@ const Base = (props: { title: string }) => {
 			<div tw='bg-white'>
 				<div tw='relative bg-zinc-900'>
 					<div aria-hidden='true' tw='absolute inset-0 overflow-hidden'>
-						<img src={LoginBackground} alt='' tw='w-full h-full object-center object-cover' />
+						<img src={HeroBackground} alt='' tw='w-full h-full object-center object-cover' />
 					</div>
 					<div aria-hidden='true' tw='absolute inset-0 bg-zinc-900 opacity-70' />
-
 					<div tw='relative max-w-3xl mx-auto pb-16 pt-36 px-6 flex flex-col items-center text-center'>
 						<Link
 							to='/blog/release'
@@ -193,34 +137,15 @@ const Base = (props: { title: string }) => {
 									clipRule='evenodd'></path>
 							</svg>
 						</Link>
-						<h1 tw='text-4xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-sky-500 lg:text-6xl drop-shadow'>
+						<h1 tw='text-4xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-sky-500 lg:text-6xl drop-shadow pb-1'>
 							Pterodactyl Market
 						</h1>
-						<p tw='mt-4 text-xl text-white'>
+						<p tw='mt-3 text-xl text-white'>
 							Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
 							minim veniam.
 						</p>
-						{/* cool buttons
-						<div tw='mt-8 flex'>
-						<div tw='inline-flex rounded-md shadow mr-2 transition-all'>
-							<a
-								href='#'
-								tw='inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-xl text-white bg-sky-600 hover:bg-sky-700 transition-all shadow hover:shadow-md border-sky-500 hover:border-sky-600 '>
-								Start browsing
-							</a>
-						</div>
-						<div tw='ml-2.5 inline-flex rounded-md shadow transition-all'>
-							<a
-								href='#'
-								tw='inline-flex items-center justify-center bg-white border border-transparent rounded-xl py-3 px-11 text-base font-medium text-zinc-900 hover:bg-zinc-100 transition-all backdrop-blur-sm backdrop-filter bg-opacity-80 shadow hover:shadow-md border-zinc-50 hover:border-zinc-200'>
-								Learn more
-							</a>
-						</div>
-					</div>
-					*/}
 					</div>
 				</div>
-
 				<main>
 					<div className='bg-zinc-50 overflow-hidden'>
 						<div className='relative max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8'>
@@ -238,7 +163,6 @@ const Base = (props: { title: string }) => {
 								</defs>
 								<rect width={404} height={784} fill='url(#8b1b5f72-e944-4457-af67-0c6d15a99f38)' />
 							</svg>
-
 							<div className='relative lg:grid lg:grid-cols-3 lg:gap-x-8'>
 								<div className='lg:col-span-1'>
 									<h2 className='text-3xl font-extrabold tracking-tight text-zinc-900 sm:text-4xl'>Consumer Friendly</h2>
@@ -295,162 +219,55 @@ const Base = (props: { title: string }) => {
 							</div>
 						</div>
 					</div>
-					<section aria-labelledby='latest-heading'>
-						<div className='-mb-3 -mt-4 px-4 sm:px-6 lg:py-10 lg:px-8 xl:max-w-7xl xl:mx-auto'>
-							<div className='md:flex md:items-center md:justify-between'>
-								<h2 id='favorites-heading' className='text-2xl font-extrabold tracking-tight text-zinc-900'>
-									Featured Products
-								</h2>
-								<a href='#' className='hidden text-sm font-medium text-sky-600 hover:text-sky-500 md:block'>
-									Browse featured products
-									<span aria-hidden='true'> &rarr;</span>
-								</a>
-							</div>
-							<div tw='mt-4 flow-root'>
-								<div tw='-my-2'>
-									<div tw='-mx-4 sm:-mx-6 lg:-mx-8 xl:mx-0 box-content py-2 relative h-[19rem] xl:h-auto overflow-x-auto xl:overflow-visible'>
-										<div tw='absolute min-w-0 px-4 flex space-x-8 sm:px-6 lg:px-8 xl:relative xl:px-0 xl:space-x-0 xl:grid xl:grid-cols-4 xl:gap-x-8'>
-											{resources.length > 0 &&
-												resources
-													?.filter((key) => key.featured)
-													.map((product: ResourceResult, index: number) => (
-														<Link
-															to={`/resource/${product.id}`}
-															key={`${product.id}, ${index}`}
-															tw='relative w-64 sm:w-56 h-auto sm:w-72 rounded-lg border border-zinc-200 bg-white hover:shadow-sm flex items-center hover:border-zinc-300 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-sky-500 px-4 py-5 transition-all'>
-															<div tw='flex flex-col justify-between -mb-2.5'>
-																<div tw='-mx-4'>
-																	<div
-																		css={[
-																			tw`w-full flex h-24 bg-cover bg-center -mt-5 rounded-t-md p-0`,
-																			{
-																				backgroundImage: `url(${!isProduction ? 'https://beta.pterodactylmarket.com' : ''}/api/files/resources/${
-																					product.id
-																				}/${product.banner})`,
-																			},
-																		]}></div>
-																	<div css={tw`-mt-14 top-0 w-20 h-20 flex ml-6`}>
-																		<img
-																			src={
-																				product.icon
-																					? `${!isProduction ? 'https://beta.pterodactylmarket.com' : ''}/api/files/resources/${product.id}/${
-																							product.icon
-																					  }`
-																					: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='rgb(161 161 170)'%3E%3Cpath fillRule='evenodd' d='M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z' clipRule='evenodd' /%3E%3C/svg%3E`
-																			}
-																			css={tw`w-20 h-20 rounded-xl shadow-inner object-cover shadow-sm bg-zinc-100 dark:bg-zinc-600 z-10`}
-																			alt={`Image for ${product.name}`}
-																		/>
-																	</div>
-																</div>
 
-																<p className='mt-4 text-lg font-medium text-zinc-900'>{product.name}</p>
-																<p className='mb-1 text-sm font-medium text-sky-600'>@{product['@expand'].profile.username}</p>
-																<p className='text-sm text-zinc-500'>{product.description}</p>
-																<div className='mt-1 flex-1 flex flex-col justify-end'>
-																	<p className='text-base font-medium text-zinc-900'>${Number((product.price / 100).toFixed(2))}</p>
-																</div>
-															</div>
-														</Link>
-													))}
-										</div>
-									</div>
+					{resources.length > 0 && (
+						<section aria-labelledby='latest-heading'>
+							<div className='-mb-3 -mt-4 px-4 sm:px-6 lg:py-10 lg:px-8 xl:max-w-7xl xl:mx-auto'>
+								<div className='md:flex md:items-center md:justify-between'>
+									<h2 id='favorites-heading' className='text-2xl font-extrabold tracking-tight text-zinc-900'>
+										Latest Content
+									</h2>
+									<a href='#' className='hidden text-sm font-medium text-sky-600 hover:text-sky-500 md:block'>
+										Browse everything
+										<span aria-hidden='true'> &rarr;</span>
+									</a>
 								</div>
-							</div>
-
-							<div className='mt-1.5 text-sm md:hidden mb-16'>
-								<a href='#' className='font-medium text-sky-600 hover:text-sky-500'>
-									Browse featured products
-									<span aria-hidden='true'> &rarr;</span>
-								</a>
-							</div>
-						</div>
-					</section>
-					<section aria-labelledby='latest-heading'>
-						<div className='-mb-3 -mt-4 px-4 sm:px-6 lg:py-10 lg:px-8 xl:max-w-7xl xl:mx-auto'>
-							<div className='md:flex md:items-center md:justify-between'>
-								<h2 id='favorites-heading' className='text-2xl font-extrabold tracking-tight text-zinc-900'>
-									Latest Content
-								</h2>
-								<a href='#' className='hidden text-sm font-medium text-sky-600 hover:text-sky-500 md:block'>
-									Browse everything
-									<span aria-hidden='true'> &rarr;</span>
-								</a>
-							</div>
-							<div tw='mt-4 flow-root'>
-								<div tw='-my-2'>
-									<div tw='-mx-4 sm:-mx-6 lg:-mx-8 xl:mx-0 box-content py-2 relative h-[19rem] xl:h-auto overflow-x-auto xl:overflow-visible'>
-										<div tw='absolute min-w-0 px-4 flex space-x-8 sm:px-6 lg:px-8 xl:relative xl:px-0 xl:space-x-0 xl:grid xl:grid-cols-4 xl:gap-x-8'>
-											{resources.length > 0 &&
-												resources?.map((product: ResourceResult, index: number) => (
-													<Link
-														to={`/resource/${product.id}`}
-														key={`${product.id}, ${index}`}
-														tw='relative w-64 sm:w-56 h-auto sm:w-72 rounded-lg border border-zinc-200 bg-white hover:shadow-sm flex items-center hover:border-zinc-300 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-sky-500 px-4 py-5 transition-all'>
-														<div tw='flex flex-col justify-between -mb-2.5'>
-															<div tw='-mx-4'>
-																<div
-																	css={[
-																		tw`w-full flex h-24 bg-cover bg-center -mt-5 rounded-t-md p-0`,
-																		{
-																			backgroundImage: `url(${!isProduction ? 'https://beta.pterodactylmarket.com' : ''}/api/files/resources/${
-																				product.id
-																			}/${product.banner})`,
-																		},
-																	]}></div>
-																<div css={tw`-mt-14 top-0 w-20 h-20 flex ml-6`}>
-																	<img
-																		src={
-																			product.icon
-																				? `${!isProduction ? 'https://beta.pterodactylmarket.com' : ''}/api/files/resources/${product.id}/${
-																						product.icon
-																				  }`
-																				: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='rgb(161 161 170)'%3E%3Cpath fillRule='evenodd' d='M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z' clipRule='evenodd' /%3E%3C/svg%3E`
-																		}
-																		css={tw`w-20 h-20 rounded-xl shadow-inner object-cover shadow-sm bg-zinc-100 dark:bg-zinc-600 z-10`}
-																		alt={`Image for ${product.name}`}
-																	/>
-																</div>
-															</div>
-
-															<p className='mt-4 text-lg font-medium text-zinc-900'>{product.name}</p>
-															<p className='mb-1 text-sm font-medium text-sky-600'>@{product['@expand'].profile.username}</p>
-															<p className='text-sm text-zinc-500'>{product.description}</p>
-															<div className='mt-1 flex-1 flex flex-col justify-end'>
-																<p className='text-base font-medium text-zinc-900'>${Number((product.price / 100).toFixed(2))}</p>
-															</div>
-														</div>
-													</Link>
+								<div tw='mt-4 flow-root'>
+									<div tw='-my-2'>
+										<div tw='-mx-4 sm:-mx-6 lg:-mx-8 xl:mx-0 box-content py-2 relative h-[19rem] xl:h-auto overflow-x-auto xl:overflow-visible'>
+											<div tw='absolute min-w-0 px-4 flex space-x-8 sm:px-6 lg:px-8 xl:relative xl:px-0 xl:space-x-0 xl:grid xl:grid-cols-4 xl:gap-x-8'>
+												{resources?.map((product: ResourceResult, index: number) => (
+													<ResourceCard data={product} key={index} />
 												))}
+											</div>
 										</div>
 									</div>
 								</div>
-							</div>
 
-							<div className='mt-1.5 text-sm md:hidden mb-6'>
-								<a href='#' className='font-medium text-sky-600 hover:text-sky-500'>
-									Browse everything
-									<span aria-hidden='true'> &rarr;</span>
-								</a>
+								<div className='mt-1.5 text-sm md:hidden mb-6'>
+									<a href='#' className='font-medium text-sky-600 hover:text-sky-500'>
+										Browse everything
+										<span aria-hidden='true'> &rarr;</span>
+									</a>
+								</div>
 							</div>
-						</div>
-					</section>
+						</section>
+					)}
 
 					<section aria-labelledby='category-heading' tw='py-10 xl:max-w-7xl xl:mx-auto xl:px-8 -mb-3 -mt-4'>
 						<div tw='px-4 sm:px-6 sm:flex sm:items-center sm:justify-between lg:px-8 xl:px-0'>
 							<h2 id='category-heading' tw='text-2xl font-extrabold tracking-tight text-zinc-900'>
-								Shop by Category
+								Popular categories
 							</h2>
 							<a href='#' tw='hidden text-sm font-semibold text-sky-600 hover:text-sky-500 sm:block'>
 								Browse all categories
 								<span aria-hidden='true'> &rarr;</span>
 							</a>
 						</div>
-
 						<div tw='mt-4 flow-root'>
 							<div tw='-my-2'>
 								<div tw='box-content py-2 relative h-80 overflow-x-auto xl:overflow-visible'>
-									<div tw='absolute min-w-0 px-4 flex space-x-8 sm:px-6 lg:px-8 xl:relative xl:px-0 xl:space-x-0 xl:grid xl:grid-cols-5 xl:gap-x-8'>
+									<div tw='absolute min-w-0 px-4 flex space-x-8 sm:px-6 lg:px-8 xl:relative xl:px-0 xl:space-x-0 xl:grid xl:grid-cols-4 xl:gap-x-8'>
 										{categories.map((category) => (
 											<a
 												key={category.name}
@@ -469,7 +286,7 @@ const Base = (props: { title: string }) => {
 						</div>
 						<div tw='mt-6 px-4 sm:hidden'>
 							<a href='#' tw='block text-sm font-semibold text-sky-600 hover:text-sky-500'>
-								Browse all categories
+								Popular categories
 								<span aria-hidden='true'> &rarr;</span>
 							</a>
 						</div>

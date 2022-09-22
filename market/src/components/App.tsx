@@ -3,16 +3,17 @@ import React, { useEffect, useState, Fragment } from 'react';
 import tw from 'twin.macro';
 import Page from '@/components/Page';
 import { refreshUser } from '@/api/auth';
-import { MarketRouter, SettingsRouter, SellerRouter } from '@/routers';
 import { useStoreState } from 'easy-peasy';
-import { Login, Oauth } from '@/components/pages/auth';
+import LoadingBar from 'react-top-loading-bar';
 import { Base } from '@/components/pages/market';
 import { store, ApplicationStore } from '@/state';
 import { isProduction, debounce } from '@/helpers';
+import { NotFound } from '@/components/pages/errors';
+import { Login, Oauth } from '@/components/pages/auth';
 import { Navbar, Footer } from '@/components/elements/market';
 import { ScrollToTop, Spinner } from '@/components/elements/generic';
+import { MarketRouter, SettingsRouter, SellerRouter } from '@/routers';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import LoadingBar from 'react-top-loading-bar';
 
 const App = () => {
 	const [loaded, setLoaded] = useState(false);
@@ -101,6 +102,7 @@ const App = () => {
 				<LoadingBar color='#39A5E9' progress={progress} onLoaderFinished={() => setProgress(0)} />
 				<ScrollToTop>
 					<Routes>
+						<Route path='*' element={<NotFound title='Whoops, cant find' />} />
 						<Route
 							path='/'
 							element={

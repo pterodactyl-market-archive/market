@@ -30,7 +30,7 @@ const Oauth = (props: { title: string }) => {
 	}, []);
 
 	const LoginViaOauth = (provider: string, code: string) => {
-		authenticateOauth(provider, code, localStorage.getItem('pterodactyl_market_auth_verifier')!, 'https://beta.pterodactylmarket.com/')
+		authenticateOauth(provider, code, localStorage.getItem('pterodactyl_market_auth_verifier')!, 'https://dev-us1-testing.pterodactylmarket.com/')
 			.then((res: any) => {
 				localStorage.removeItem('pterodactyl_market_auth_verifier');
 				localStorage.setItem('pterodactyl_market_auth', res.token);

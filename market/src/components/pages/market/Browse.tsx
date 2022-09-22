@@ -28,7 +28,7 @@ const filters = [
 	},
 ];
 
-const Footer = (props: { title: string }) => {
+const Browse = (props: { title: string }) => {
 	const { id } = useParams();
 	const [activeFilters, setActiveFilter] = useState([] as any);
 	const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
@@ -264,4 +264,4 @@ const Footer = (props: { title: string }) => {
 		</PageContentBlock>
 	);
 };
-export default Footer;
+export default Browse;
