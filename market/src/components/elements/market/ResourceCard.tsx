@@ -2,6 +2,7 @@ import React, { useEffect, useState, Fragment } from 'react';
 
 import tw from 'twin.macro';
 import { Link } from 'react-router-dom';
+import { StarIcon } from '@heroicons/react/solid';
 import { isProduction, formatPrice } from '@/helpers';
 import { LightBulbIcon } from '@heroicons/react/solid';
 import { BadgeCheckIcon } from '@heroicons/react/outline';
@@ -22,7 +23,7 @@ const ResourceCard = (props: { data: any }) => {
 						<div tw='absolute -top-3 right-2'>
 							<Link
 								to='/help/docs/featured'
-								className='inline-flex items-center py-0.5 pl-1 pr-2 rounded-full text-xs font-medium bg-green-100 text-green-700 shadow-sm hover:bg-green-700 hover:text-green-100 transition'>
+								className='inline-flex items-center py-0.5 pl-1 pr-2 rounded-full text-xs font-medium bg-cyan-100 text-cyan-700 shadow-sm hover:bg-cyan-600 hover:text-cyan-50 transition'>
 								<LightBulbIcon tw='w-4 h-4 mr-1' />
 								Sponsored
 							</Link>
@@ -57,8 +58,20 @@ const ResourceCard = (props: { data: any }) => {
 						? props.data.details.substr(0, 90).replace(/<[^>]*>?/gm, '') + (props.data.details.length > 90 ? '...' : '')
 						: 'The author has not yet provided a description.'}
 				</p>
-				<div className='mt-1 flex-1 flex flex-col justify-end'>
-					<p className='text-base font-medium text-zinc-900'>${formatPrice((props.data.price / 100).toString())}</p>
+				<div className='flex-1 flex flex-row justify-between mt-2 border-t border-zinc-200 -mx-4 px-3 pt-2'>
+					<p className='text-sm font-medium text-green-800 py-0.5 px-1.5 rounded bg-green-100 w-fit'>
+						${formatPrice((props.data.price / 100).toString())}
+					</p>
+					<p className='font-medium text-zinc-600 py-0.5'>
+						<div tw='flex items-center'>
+							<StarIcon className='text-zinc-300 h-5 w-5 flex-shrink-0' aria-hidden='true' />{' '}
+							<StarIcon className='text-zinc-300 h-5 w-5 flex-shrink-0' aria-hidden='true' />
+							<StarIcon className='text-zinc-300 h-5 w-5 flex-shrink-0' aria-hidden='true' />
+							<StarIcon className='text-zinc-300 h-5 w-5 flex-shrink-0' aria-hidden='true' />
+							<StarIcon className='text-zinc-300 h-5 w-5 flex-shrink-0' aria-hidden='true' />
+							<span tw='text-xs ml-1'>(0)</span>
+						</div>
+					</p>
 				</div>
 			</div>
 		</Link>

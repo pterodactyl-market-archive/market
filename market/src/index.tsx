@@ -17,22 +17,9 @@ const container = document.getElementById('root');
 const root = createRoot(container!);
 const StoreProviderCasted = StoreProvider as unknown as React.ComponentType<Props>;
 
-if (window.location.hostname === 'beta.pterodactylmarket.com') {
-	if (localStorage.getItem('access-key') !== 'b9eeb29f-1ba7-476f-b9a2-e47355264d0a') {
-		root.render(<b>403: access denied</b>);
-	} else {
-		root.render(
-			<StoreProviderCasted store={store}>
-				<GlobalStyles />
-				<App />
-			</StoreProviderCasted>
-		);
-	}
-} else {
-	root.render(
-		<StoreProviderCasted store={store}>
-			<GlobalStyles />
-			<App />
-		</StoreProviderCasted>
-	);
-}
+root.render(
+	<StoreProviderCasted store={store}>
+		<GlobalStyles />
+		<App />
+	</StoreProviderCasted>
+);

@@ -42,7 +42,7 @@ const userNavigation = [
 
 const stats = [
 	{ label: 'Resources', value: 2 },
-	{ label: 'Resource views', value: 4 },
+	{ label: 'Resource downloads', value: 4 },
 	{ label: 'Unresolved messages', value: 1 },
 ];
 
@@ -56,7 +56,7 @@ const actions = [
 	},
 	{
 		icon: BadgeCheckIcon,
-		name: 'Benefits',
+		name: 'Benefits OR apply seller here',
 		href: '#',
 		iconForeground: 'text-purple-700',
 		iconBackground: 'bg-purple-50',
@@ -148,30 +148,20 @@ const Dashboard = (props: { title: string }) => {
 	return (
 		<PageContentBlock title={`${props.title}`}>
 			<div tw='min-h-full'>
-				<Popover as='header' tw='pb-24 bg-gradient-to-r from-sky-800 to-sky-600'>
+				<Popover as='header' tw='pb-24 bg-sky-800'>
 					{({ open }) => (
 						<>
 							<div tw='max-w-3xl mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8'>
 								<div tw='pb-8 pt-6 lg:p-0 relative flex flex-wrap items-center justify-center lg:justify-between'>
-									{/* Logo */}
 									<div tw='absolute left-0 py-5 flex-shrink-0 lg:static text-sky-100 font-bold text-2xl'>
 										<Link to='/'>Pterodactyl Market</Link>
 										<p tw='text-lg text-sky-200 font-semibold'>Seller Dashboard</p>
 									</div>
-
-									{/* Right section on desktop */}
 									<div tw='hidden lg:ml-4 lg:flex lg:items-center lg:py-5 lg:pr-0.5'>
-										<button
-											type='button'
-											tw='flex-shrink-0 p-1 text-sky-200 rounded-full hover:text-white hover:bg-white hover:bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-white'>
-											<span tw='sr-only'>View notifications</span>
-											<BellIcon tw='h-6 w-6' aria-hidden='true' />
-										</button>
-
 										{/* Profile dropdown */}
 										<Menu as='div' tw='ml-4 relative flex-shrink-0'>
 											<div>
-												<Menu.Button tw='bg-white rounded-full flex text-sm ring-2 ring-white ring-opacity-20 focus:outline-none focus:ring-opacity-100'>
+												<Menu.Button tw='bg-white rounded-full flex text-sm ring-2 ring-white ring-opacity-20 focus:outline-none'>
 													<span tw='sr-only'>Open user menu</span>
 													<img tw='h-8 w-8 rounded-full' src={UserData!.profile.avatar} alt='' />
 												</Menu.Button>
@@ -202,16 +192,16 @@ const Dashboard = (props: { title: string }) => {
 											<div tw='hidden lg:block lg:col-span-2'>
 												<nav tw='flex space-x-4'>
 													{navigation.map((item) => (
-														<a
+														<Link
 															key={item.name}
-															href={item.href}
+															to={item.href}
 															className={classNames(
 																item.current ? 'text-white drop-shadow-sm' : 'text-sky-100',
 																'text-sm font-medium rounded-md bg-white bg-opacity-0 px-3 py-2 hover:bg-opacity-10'
 															)}
 															aria-current={item.current ? 'page' : undefined}>
 															{item.name}
-														</a>
+														</Link>
 													))}
 												</nav>
 											</div>

@@ -1,11 +1,13 @@
 import React, { useState, useEffect, Fragment } from 'react';
 
+import ky from 'ky';
 import tw from 'twin.macro';
 import { signOut } from '@/api/auth';
-import { Link } from 'react-router-dom';
+import { updateUserProfile } from '@/api/user';
+import { Link, useLocation } from 'react-router-dom';
 import { useStoreState } from 'easy-peasy';
 import { ApplicationStore } from '@/state';
-import { debounce, classNames } from '@/helpers';
+import { isProduction, debounce, classNames, formatPrice } from '@/helpers';
 import { NavbarBackground } from '@/assets/images';
 import { Spinner } from '@/components/elements/generic';
 import { ChevronDownIcon } from '@heroicons/react/solid';
@@ -104,7 +106,7 @@ const navigation = {
 			name: 'Scripts',
 			description: 'CLorem ipsum dolor sit amet, consectetur adipiscing elit.',
 			href: '/marketplace/scripts',
-			color: 'bg-indigo-500',
+			color: 'bg-sky-500',
 			icon: CogIcon,
 		},
 		{
@@ -130,14 +132,65 @@ const navigation = {
 };
 
 const Navbar = () => {
+	const location = useLocation();
 	const [visible, setVisible] = useState(true);
+	const [loading, setLoading] = useState(false);
+	const [shoppingCart, setShoppingCart] = useState([]);
+	const [currencyType, setCurrencyType] = useState('USD');
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+	const [shoppingCartStatus, openShoppingCart] = useState(false);
 	const UserData = useStoreState((state: ApplicationStore) => state.user.data);
 
 	const handleScroll = debounce(() => {
 		const currentScrollPos = window.pageYOffset;
 		setVisible(currentScrollPos < 10);
 	}, 5);
+
+	const updateNavData = () => {
+		if (UserData?.token) {
+			ky.get(`https://beta.pterodactylmarket.com/api/collections/profiles/records/${UserData!.account.id}?expand=shopping_cart`)
+				.json()
+				.then((data: any) => {
+					setShoppingCart(data['@expand'] ? data['@expand'].shopping_cart : []);
+					setCurrencyType(data.currency);
+				});
+		}
+	};
+
+	const removeItem = (id: string) => {
+		if (UserData?.token) {
+			updateUserProfile(UserData!.token, UserData!.account.id, {
+				shopping_cart: shoppingCart.filter((e: string) => e !== id),
+			}).then(() => updateNavData());
+		}
+	};
+
+	const stripeCheckout = () => {
+		setLoading(true);
+		const products = shoppingCart.map((item: any) => item.id);
+		ky.post(`https://beta.pterodactylmarket.com/api/checkout/stripe/${products.join(',')}`, {
+			headers: {
+				Authorization: `User ${UserData!.token}`,
+			},
+		})
+			.json()
+			.then((data: any) => {
+				updateUserProfile(UserData!.token, UserData!.account.id, {
+					shopping_cart: [],
+				})
+					.then(() => {
+						setLoading(false);
+						//@ts-ignore
+						window.location.href = data.session;
+					})
+					.catch((err) => console.log(err));
+			})
+			.catch((err) => console.log(err));
+	};
+
+	useEffect(() => {
+		updateNavData();
+	}, [location.pathname]);
 
 	useEffect(() => {
 		window.addEventListener('scroll', handleScroll);
@@ -146,6 +199,146 @@ const Navbar = () => {
 
 	return (
 		<nav>
+			<Transition.Root show={shoppingCartStatus} as={Fragment}>
+				<Dialog as='div' className='fixed inset-0 overflow-hidden z-[200]' onClose={openShoppingCart}>
+					<div className='absolute inset-0 overflow-hidden'>
+						<Transition.Child
+							as={Fragment}
+							enter='ease-in-out duration-500'
+							enterFrom='opacity-0'
+							enterTo='opacity-100'
+							leave='ease-in-out duration-500'
+							leaveFrom='opacity-100'
+							leaveTo='opacity-0'>
+							<Dialog.Overlay className='absolute inset-0 bg-zinc-500 bg-opacity-75 backdrop-blur-sm transition-opacity' />
+						</Transition.Child>
+
+						<div className='fixed inset-y-0 right-0 pl-10 max-w-full flex'>
+							<Transition.Child
+								as={Fragment}
+								enter='transform transition ease-in-out duration-500'
+								enterFrom='translate-x-full'
+								enterTo='translate-x-0'
+								leave='transform transition ease-in-out duration-500'
+								leaveFrom='translate-x-0'
+								leaveTo='translate-x-full'>
+								<div className='w-screen max-w-md'>
+									<div className='h-full flex flex-col bg-white shadow-xl overflow-y-scroll'>
+										<div className='flex-1 py-6 overflow-y-auto px-4 sm:px-6'>
+											<div className='flex items-start justify-between'>
+												<Dialog.Title className='text-lg font-medium text-zinc-900'>Shopping cart</Dialog.Title>
+												<div className='ml-3 h-7 flex items-center'>
+													<button type='button' className='-m-2 p-2 text-zinc-400 hover:text-zinc-500' onClick={() => openShoppingCart(false)}>
+														<span className='sr-only'>Close panel</span>
+														<XIcon className='h-6 w-6' aria-hidden='true' />
+													</button>
+												</div>
+											</div>
+
+											<div className='mt-8'>
+												<div className='flow-root'>
+													<ul role='list' className='-my-6 divide-y divide-zinc-200'>
+														{shoppingCart.map((item: any) => {
+															const productIcon = item.icon
+																? `${!isProduction ? 'https://beta.pterodactylmarket.com' : ''}/api/files/resources/${item.id}/${item.icon}`
+																: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='rgb(161 161 170)'%3E%3Cpath fillRule='evenodd' d='M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z' clipRule='evenodd' /%3E%3C/svg%3E`;
+															return (
+																<li key={item.id} className='py-6 flex'>
+																	<div className='flex-shrink-0 w-24 h-24 border border-zinc-200 rounded-md overflow-hidden'>
+																		<img src={productIcon} className='w-full h-full object-center object-cover' />
+																	</div>
+
+																	<div className='ml-4 flex-1 flex flex-col'>
+																		<div>
+																			<div className='flex justify-between text-base font-medium text-zinc-900'>
+																				<h3>
+																					<Link to={item.id}>{item.name}</Link>
+																				</h3>
+																				<p className='ml-4'>${formatPrice((item.price / 100).toString())}</p>
+																			</div>
+																			<p className='text-[0.77rem] text-zinc-500 h-[3.8rem]'>
+																				{item.details
+																					? item.details.substr(0, 90).replace(/<[^>]*>?/gm, '') + (item.details.length > 90 ? '...' : '')
+																					: 'The author has not yet provided a description.'}
+																			</p>
+																		</div>
+																		<div className='-mt-1 flex-1 flex items-end justify-between text-sm'>
+																			<div className='flex'>
+																				<button
+																					onClick={() => removeItem(item.id)}
+																					type='button'
+																					className='font-medium text-sky-600 hover:text-sky-500'>
+																					Remove
+																				</button>
+																			</div>
+																		</div>
+																	</div>
+																</li>
+															);
+														})}
+													</ul>
+												</div>
+											</div>
+										</div>
+
+										<div className='border-t border-zinc-200 py-6 px-4 sm:px-6'>
+											<div className='flex justify-between text-base font-medium text-zinc-900'>
+												<p>Subtotal</p>
+												<p>
+													$
+													{formatPrice(
+														(
+															shoppingCart.reduce((sum: number, item: any) => {
+																return sum + item.price;
+															}, 0) / 100
+														).toString()
+													)}
+												</p>
+											</div>
+											<p className='mt-0.5 text-sm text-zinc-500'>Fees and taxes calculated at checkout.</p>
+											{shoppingCart.length != 0 ? (
+												<Fragment>
+													<div className='mt-6'>
+														<button
+															disabled={loading}
+															onClick={() => stripeCheckout()}
+															tw='relative flex justify-center items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-sky-600 hover:(text-white bg-gradient-to-br from-purple-600 to-blue-500) w-full disabled:(pointer-events-none text-white bg-gradient-to-br from-purple-600 to-blue-500)'>
+															Stripe Checkout
+															{loading && (
+																<span className='absolute left-0 inset-y-0 flex items-center pl-3'>
+																	<Spinner size='small' />
+																</span>
+															)}
+														</button>
+													</div>
+													<div className='mt-6 flex justify-center text-sm text-center text-zinc-500'>
+														<p>
+															or{' '}
+															<button
+																type='button'
+																disabled={loading}
+																className='text-sky-600 font-medium hover:text-sky-500 disabled:text-zinc-600'
+																onClick={() => openShoppingCart(false)}>
+																Continue Shopping<span aria-hidden='true'> &rarr;</span>
+															</button>
+														</p>
+													</div>
+												</Fragment>
+											) : (
+												<div className='mt-6 flex justify-center text-sm text-center text-zinc-500'>
+													<button type='button' className='text-sky-600 font-medium hover:text-sky-500' onClick={() => openShoppingCart(false)}>
+														Continue Shopping<span aria-hidden='true'> &rarr;</span>
+													</button>
+												</div>
+											)}
+										</div>
+									</div>
+								</div>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
 			<Transition.Root show={mobileMenuOpen} as={Fragment}>
 				<Dialog as='div' tw='fixed inset-0 flex z-40 lg:hidden' onClose={setMobileMenuOpen}>
 					<Transition.Child
@@ -229,7 +422,7 @@ const Navbar = () => {
 										<label htmlFor='mobile-currency' tw='sr-only'>
 											Currency
 										</label>
-										<div className='group' tw='-ml-2 relative border-transparent rounded-md focus-within:ring-2 focus-within:ring-white'>
+										<div className='group' tw='-ml-2 relative border-transparent rounded-md'>
 											<select
 												id='mobile-currency'
 												name='currency'
@@ -252,32 +445,40 @@ const Navbar = () => {
 				</Dialog>
 			</Transition.Root>
 			<header tw='relative z-20 fixed w-full' style={{ transition: 'top 0.6s', top: visible ? '0' : '-40px' }}>
-				{/* <Fallback /> */}
 				<nav aria-label='Top'>
 					<div tw='bg-sky-900'>
 						<div tw='max-w-7xl mx-auto h-10 px-4 flex items-center justify-between sm:px-6 lg:px-8'>
-							<form>
+							<form
+								onBlur={() => {
+									updateUserProfile(UserData!.token, UserData!.account.id, {
+										currency: currencyType,
+									});
+								}}>
 								<div>
 									<label htmlFor='desktop-currency' tw='sr-only'>
 										Currency
 									</label>
-									<div className='group' tw='-ml-2 relative bg-sky-900 border-transparent rounded-md focus-within:ring-2 focus-within:ring-white'>
+									<div className='group' tw='-ml-2 relative bg-sky-900 border-transparent rounded-md'>
 										<select
+											disabled={!UserData?.token}
 											id='desktop-currency'
 											name='currency'
-											tw='bg-none bg-sky-900 border-transparent rounded-md py-0.5 pl-2 pr-5 flex items-center text-sm font-medium text-white group-hover:text-zinc-100 focus:outline-none focus:ring-0 focus:border-transparent'>
+											value={currencyType}
+											onChange={(event) => setCurrencyType(event.target.value)}
+											tw='bg-none bg-sky-900 border-transparent rounded-md py-0.5 pl-2 pr-5 flex items-center text-sm font-medium text-white group-hover:text-zinc-100 focus:outline-none focus:ring-0 focus:border-transparent disabled:pointer-events-none'>
 											{currencies.map((currency) => (
 												<option key={currency}>{currency}</option>
 											))}
 										</select>
 										<div tw='absolute right-0 inset-y-0 flex items-center pointer-events-none'>
-											<svg aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20' tw='w-5 h-5 text-zinc-300'>
+											<svg aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20' tw='w-5 h-5 text-sky-100'>
 												<path stroke='currentColor' strokeLinecap='round' strokeLinejoin='round' strokeWidth='1.5' d='M6 8l4 4 4-4' />
 											</svg>
 										</div>
 									</div>
 								</div>
 							</form>
+
 							<div tw='flex items-center space-x-6'>
 								{UserData?.token ? (
 									<Menu as='div' className='relative inline-block text-left z-50'>
@@ -385,10 +586,10 @@ const Navbar = () => {
 									</Menu>
 								) : (
 									<Fragment>
-										<Link to='/login' tw='text-sm font-medium text-white hover:text-zinc-200'>
+										<Link to='/login' tw='text-sm font-medium text-white hover:text-sky-200 transition'>
 											Sign in
 										</Link>
-										<Link to='/register' tw='text-sm font-medium text-white hover:text-zinc-200'>
+										<Link to='/register' tw='text-sm font-medium text-white hover:text-sky-200 transition'>
 											Create an account
 										</Link>
 									</Fragment>
@@ -399,13 +600,13 @@ const Navbar = () => {
 
 					<div
 						tw='backdrop-blur-md backdrop-filter bg-opacity-70 bg-sky-700 transition-all'
-						css={(!visible || window.location.pathname !== '/') && tw`bg-opacity-[0.85] shadow-md`}>
+						css={(!visible || window.location.pathname !== '/') && tw`bg-opacity-[0.90] shadow-md bg-sky-700`}>
 						<div tw='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
 							<div>
 								<div tw='h-16 flex items-center justify-between'>
 									{/* Logo (lg+) */}
 									<div tw='hidden lg:flex-1 lg:flex lg:items-center'>
-										<Link to='/' tw='font-bold text-zinc-100 hover:text-sky-300 transition'>
+										<Link to='/' tw='font-bold text-zinc-100 hover:text-sky-200 transition'>
 											Pterodactyl Market
 										</Link>
 									</div>
@@ -419,12 +620,12 @@ const Navbar = () => {
 														<>
 															<div tw='relative flex'>
 																<Popover.Button
-																	tw='relative z-10 flex items-center justify-center transition-colors ease-out duration-200 text-sm font-medium text-white drop-shadow-sm hover:text-sky-200 transition focus:outline-none'
-																	css={open && tw`text-sky-300 hover:text-sky-300`}>
+																	tw='relative z-10 flex items-center justify-center transition-colors ease-out duration-200 text-sm font-medium text-sky-100 drop-shadow-sm hover:text-sky-50 hover:font-semibold hover:tracking-[-0.01em] transition focus:outline-none'
+																	css={open && tw`text-white font-semibold hover:text-white tracking-[-0.01em]`}>
 																	Marketplace
 																	<span
 																		className={classNames(
-																			open ? 'bg-sky-300' : '',
+																			open ? 'bg-white' : '',
 																			'absolute -bottom-px inset-x-0 h-0.5 transition ease-out duration-200'
 																		)}
 																		aria-hidden='true'
@@ -518,7 +719,7 @@ const Navbar = () => {
 													<Link
 														key={page.name}
 														to={page.href}
-														tw='flex items-center text-sm font-medium text-white drop-shadow-sm hover:text-sky-200 transition'>
+														tw='flex items-center text-sm font-medium text-sky-100 drop-shadow-sm hover:text-sky-50 hover:font-semibold hover:tracking-[-0.01em] transition'>
 														{page.name}
 													</Link>
 												))}
@@ -528,13 +729,13 @@ const Navbar = () => {
 
 									{/* Mobile menu and search (lg-) */}
 									<div tw='flex-1 flex items-center lg:hidden'>
-										<button type='button' tw='-ml-2 p-2 text-white hover:text-sky-200 transition' onClick={() => setMobileMenuOpen(true)}>
+										<button type='button' tw='-ml-2 p-2 text-sky-100 hover:text-sky-50 transition' onClick={() => setMobileMenuOpen(true)}>
 											<span tw='sr-only'>Open menu</span>
 											<MenuIcon tw='h-6 w-6' aria-hidden='true' />
 										</button>
 
 										{/* Search */}
-										<a href='#' tw='ml-2 p-2 text-white hover:text-sky-200 transition'>
+										<a href='#' tw='ml-2 p-2 text-sky-100 hover:text-sky-50 transition'>
 											<span tw='sr-only'>Search</span>
 											<SearchIcon tw='w-6 h-6' aria-hidden='true' />
 										</a>
@@ -751,13 +952,15 @@ const Navbar = () => {
 												</div>
 											)}
 
-											{/* Cart */}
 											<div tw='ml-4 flow-root lg:ml-8'>
-												<a href='#' className='group -m-2 p-2 flex items-center'>
+												<button
+													disabled={!UserData?.token}
+													onClick={() => openShoppingCart(true)}
+													className='group -m-2 p-2 flex items-center disabled:pointer-events-none disabled:opacity-80'>
 													<ShoppingBagIcon tw='flex-shrink-0 h-6 w-6 text-white hover:text-sky-200 transition' aria-hidden='true' />
-													<span tw='ml-2 text-sm font-medium text-white'>0</span>
+													<span tw='ml-2 text-sm font-medium text-white'>{shoppingCart.length}</span>
 													<span tw='sr-only'>items in cart, view bag</span>
-												</a>
+												</button>
 											</div>
 										</div>
 									</div>

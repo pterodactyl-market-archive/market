@@ -9,6 +9,7 @@ let initialState = {
 	publicEmail: '',
 	account: {
 		id: '',
+		verified: false,
 		created: '',
 		updated: '',
 	},
@@ -36,6 +37,7 @@ export interface UserData {
 	publicEmail: string;
 	account: {
 		id: string;
+		verified: boolean;
 		created: string;
 		updated: string;
 	};

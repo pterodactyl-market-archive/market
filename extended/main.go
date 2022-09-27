@@ -11,6 +11,7 @@ import (
 	"strings"
 	"io/ioutil"
 	"encoding/json"
+	"encoding/base64"
 
 	"github.com/labstack/echo/v5"
 	"github.com/labstack/echo/v5/middleware"
@@ -424,8 +425,8 @@ func main() {
 				 LineItems: StripeLineItems,
 				 CustomerEmail: stripe.String(user.Email),
 				 Mode: stripe.String(string(stripe.CheckoutSessionModePayment)),
-				 SuccessURL: stripe.String(domain + "/success"),
-				 CancelURL: stripe.String(domain + "/cancelled"),
+				 SuccessURL: stripe.String(domain + "/basket/success?session=" + base64.StdEncoding.EncodeToString([]byte(c.PathParam("id")))),
+				 CancelURL: stripe.String(domain + "/basket/canceled?session=" + base64.StdEncoding.EncodeToString([]byte(c.PathParam("id")))),
 			  }
 			
 			  params.AddMetadata("purchaser", user.Id)

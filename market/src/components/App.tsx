@@ -45,6 +45,7 @@ const App = () => {
 						publicEmail: profile.public_email,
 						account: {
 							id: profile.id,
+							verified: user.verified,
 							created: profile.created,
 							updated: profile.updated,
 						},

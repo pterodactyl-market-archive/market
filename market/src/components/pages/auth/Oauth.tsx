@@ -55,6 +55,7 @@ const Oauth = (props: { title: string }) => {
 						publicEmail: profile.public_email,
 						account: {
 							id: profile.id,
+							verified: res.user.verified,
 							created: profile.created,
 							updated: profile.updated,
 						},

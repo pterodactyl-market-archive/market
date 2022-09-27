@@ -50,6 +50,7 @@ const Login = (props: { title: string }) => {
 					publicEmail: profile.public_email,
 					account: {
 						id: profile.id,
+						verified: user.verified,
 						created: profile.created,
 						updated: profile.updated,
 					},
@@ -84,9 +85,12 @@ const Login = (props: { title: string }) => {
 	return (
 		<PageContentBlock title={props.title}>
 			<div tw='min-h-full flex'>
-				<div tw='flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24'>
+				<div tw='flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24 shadow-2xl'>
 					<div tw='mx-auto w-full max-w-sm lg:w-96'>
 						<div>
+							<Link to='/'>
+								<div className='text-sky-600 font-black text-xl text-left mb-1'>Pterodactyl Market</div>
+							</Link>
 							<h2 tw='text-3xl font-extrabold text-gray-900'>Sign in to your account</h2>
 							<p tw='mt-2 text-sm text-gray-600'>
 								Don’t have an account?
@@ -191,7 +195,7 @@ const Login = (props: { title: string }) => {
 										<button
 											type='submit'
 											disabled={loading}
-											tw='relative w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 disabled:(cursor-default bg-opacity-75 hover:bg-sky-600 hover:bg-opacity-75) transition'>
+											tw='relative w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 disabled:(pointer-events-none bg-opacity-75 hover:bg-sky-600 hover:bg-opacity-75) transition'>
 											Sign in
 											{loading && (
 												<span className='absolute right-0 inset-y-0 flex items-center pr-3'>
@@ -209,14 +213,8 @@ const Login = (props: { title: string }) => {
 					</div>
 				</div>
 				<div tw='hidden lg:block relative w-0 flex-1'>
-					<img tw='absolute inset-0 h-full w-full object-cover hue-rotate-[-10deg] brightness-[0.92]' src={LoginBackground} alt='' />
+					<img tw='absolute inset-0 h-full w-full object-cover hue-rotate-[-10deg] brightness-[0.92] rotate-180' src={LoginBackground} alt='' />
 				</div>
-				<Link to='/' tw='absolute top-0 right-4 -mt-2'>
-					<div className='text-sky-200 font-black text-[4rem] text-right'>
-						<p>Pterodactyl</p>
-						<p tw='-mt-10 text-sky-300'>Market</p>
-					</div>
-				</Link>
 			</div>
 			<Notification
 				show={show}
